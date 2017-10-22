@@ -9,18 +9,11 @@
             "request": "launch",
             "name": "Electron Main",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-            "program": "${workspaceFolder}/main.js",
-            "protocol": "legacy"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
             "program": "${workspaceFolder}/dist/main/app.js",
-            "preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [
                 "${workspaceFolder}/dist/out-tsc/**/*.js"
-            ]
+            ],
+            "protocol": "inspector"
         }
     ]
 }
