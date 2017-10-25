@@ -209,13 +209,34 @@ export class ProgramListComponent implements OnInit, OnDestroy, OnChanges{
 
             }, 1000);
 
+            let path = require('path');
+            
+            var final_dest = "/Users/isamunakagawa/Google ドライブ/01-radiko/01-mac/01-el"
+            var filename_tmp  = path.join(this.config.saveDir, this.station.id, this.selectedProgram.ft.substr(0, 8), this.selectedProgram.title + ".aac");
+            var filename_part = path.join(final_dest, this.selectedProgram.ft.substr(0,8) + "-"  +this.selectedProgram.title + ".aac");
+                                          
+            console.log("filename tmp:  "+ filename_tmp)                
+            console.log("filename part: "+ filename_part) 
+
             this.radikoService.getTimeFree(this.station.id, this.selectedProgram, this.config.saveDir, (mes) => {
                     downloadProgress = mes;
 
                 }, () => {
                     this.loading = false;
+                    console.log()
 
                     complete = true;
+                    var exec = require('child_process').exec;
+                    var cmd = 'mv "' + filename_tmp + '" "' + filename_part + '"'
+                    exec(cmd);           
+                    exec('ls -tl "' + final_dest + '"', 
+                        function(err, stdout, stderr){
+                            // some process 
+                            console.log(stdout);    
+                        }
+                    );
+                    console.log("file %s created.", filename_part);
+
                 }
             );
         }

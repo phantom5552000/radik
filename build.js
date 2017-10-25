@@ -6,7 +6,7 @@ packager({
     dir: "./dist",
     out: "./release",
     icon: "./src/images/icon.ico",
-    platform: "win32",
+    platform: "darwin",
     arch: "x64",
     overwrite: true,
     asar: false,
