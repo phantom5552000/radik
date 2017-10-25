@@ -8,7 +8,8 @@ import {Utility} from "../utility";
 
 let app = require('electron').remote.app;
 let process = require('electron').remote.process;
-const libDir = Path.join(app.getAppPath(), 'libs', process.platform);
+const libDir = '/usr/local/bin';//Path.join(app.getAppPath(), 'libs', process.platform);
+console.log("libDir: "+ libDir);
 
 @Injectable()
 export class RadikoService{
