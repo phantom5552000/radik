@@ -1,16 +1,17 @@
 import {Component, OnInit, OnDestroy, Output, EventEmitter, Input} from '@angular/core';
 import {ConfigService} from '../services/config.service';
 import {IConfig} from '../interfaces/config.interface';
-import {ILibrary} from "../interfaces/library.interface";
+import {IFavorite} from "../interfaces/favorite.interface";
 import {StateService} from "../services/state.service";
 
 
 @Component({
-    selector: 'Library',
+    selector: 'Favorite',
     template: `
         <table class="table is-striped is-narrow">
             <tbody>
                 <tr *ngFor="let file of files">
+                    <td>aaa</td>
                     <td>{{file.name}}</td>
                     <td class="datetime">{{file.lastUpdate | date:'yyyy/MM/dd HH:mm:ss'}}</td>
                     <td>{{file.size}}</td>
@@ -27,13 +28,13 @@ import {StateService} from "../services/state.service";
         
     `
 })
-export class LibraryComponent implements OnInit, OnDestroy{
+export class FavoriteComponent implements OnInit, OnDestroy{
 
     @Output()
-    private play:EventEmitter<ILibrary> = new EventEmitter<ILibrary>();
+    private play:EventEmitter<IFavorite> = new EventEmitter<IFavorite>();
 
     private config:IConfig;
-    private files: ILibrary[] = [];
+    private files: IFavorite[] = [];
 
     private sub;
 
@@ -56,6 +57,7 @@ export class LibraryComponent implements OnInit, OnDestroy{
         private configService: ConfigService){}
 
     public refresh = () => {
+        // naka
         let klaw = require('klaw');
         let path = require('path');
         let files = [];
@@ -100,7 +102,7 @@ export class LibraryComponent implements OnInit, OnDestroy{
 
     };
 
-    private onClick = (library:ILibrary) =>{
+    private onClick = (library:IFavorite) =>{
         this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
     }
 }

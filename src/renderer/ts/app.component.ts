@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {IStation} from './interfaces/station.interface';
 import {ILibrary} from './interfaces/library.interface';
+import {IFavorite} from './interfaces/favorite.interface';
 import {StateService} from './services/state.service';
 import {RadikoService} from "./services/radiko.service";
 
@@ -22,8 +23,8 @@ class WebView extends HTMLElement{
                     <div class="nav-menu nav-left">
                         <a class="nav-item is-tab" [class.is-active]="tool == 'info'" (click)="tool = 'info'">おしらせ</a>
                         <a class="nav-item is-tab" [class.is-active]="tool == 'programs'" (click)="tool = 'programs'">番組表</a>
-                        <a class="nav-item is-tab" [class.is-active]="tool == 'library'" (click)="tool = 'library'">ライブラリ</a>
-                        <a class="nav-item is-tab" [class.is-active]="tool == 'library'" (click)="tool = 'library'">お気に入り</a>
+                        <a class="nav-item is-tab" [class.is-active]="tool == 'library'"  (click)="tool = 'library'">ライブラリ</a>
+                        <a class="nav-item is-tab" [class.is-active]="tool == 'favorite'" (click)="tool = 'favorite'">お気に入り</a>
                     </div>
                     <div class="nav-menu nav-right">
                         <a class="nav-item is-tab" [class.is-active]="tool == 'config'" (click)="tool = 'config'">設定</a>
@@ -42,6 +43,9 @@ class WebView extends HTMLElement{
                 </ng-container>
                 <div [hidden]="tool != 'library'" style="width: 100%">
                     <Library (play)="onPlay($event)"></Library>
+                </div>
+                <div [hidden]="tool != 'favorite'" style="width: 100%">
+                    <Favorite (play)="onPlay($event)"></Favorite>
                 </div>
                 <div *ngIf="tool == 'config'" style="width: 100%">
                     <Config></Config>
@@ -74,7 +78,8 @@ export class AppComponent implements OnInit{
 
 
     private playingFile:ILibrary;
-
+    private playingFile2:IFavorite;
+    
     ngOnInit() {
         const startPage = 'https://www.radikool.com/start/?ver=el0.1.0';
         let webview = document.createElement('webview') as WebView;

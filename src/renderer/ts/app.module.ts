@@ -11,6 +11,7 @@ import { ProgramListComponent } from './components/programList.component';
 import { ConfigComponent      } from './components/config.component';
 import { ConfigService        } from './services/config.service';
 import { LibraryComponent     } from './components/library.component';
+import { FavoriteComponent    } from './components/favorite.component';
 import { Setting              } from './setting';
 import { PlayerComponent      } from './components/player.component';
 import { StateService         } from './services/state.service';
@@ -23,6 +24,7 @@ import { StateService         } from './services/state.service';
         ProgramListComponent,
         ConfigComponent,
         LibraryComponent,
+        FavoriteComponent,
         PlayerComponent
     ],
     imports: [
