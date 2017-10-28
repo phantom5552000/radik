@@ -23,6 +23,7 @@ class WebView extends HTMLElement{
                         <a class="nav-item is-tab" [class.is-active]="tool == 'info'" (click)="tool = 'info'">おしらせ</a>
                         <a class="nav-item is-tab" [class.is-active]="tool == 'programs'" (click)="tool = 'programs'">番組表</a>
                         <a class="nav-item is-tab" [class.is-active]="tool == 'library'" (click)="tool = 'library'">ライブラリ</a>
+                        <a class="nav-item is-tab" [class.is-active]="tool == 'library'" (click)="tool = 'library'">お気に入り</a>
                     </div>
                     <div class="nav-menu nav-right">
                         <a class="nav-item is-tab" [class.is-active]="tool == 'config'" (click)="tool = 'config'">設定</a>
