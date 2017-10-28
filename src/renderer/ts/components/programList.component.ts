@@ -227,16 +227,20 @@ export class ProgramListComponent implements OnInit, OnDestroy, OnChanges{
 
                     complete = true;
                     var exec = require('child_process').exec;
-                    var cmd = 'mv "' + filename_tmp + '" "' + filename_part + '"'
-                    exec(cmd);           
-                    exec('ls -tl "' + final_dest + '"', 
+                    var sprintf = require("sprintf-js").sprintf, vsprintf = require("sprintf-js").vsprintf
+                    var cmd = sprintf("mv '%1$s' '%2$s'", filename_tmp, filename_part);
+                    console.log(cmd);
+                    var exec_cmd = exec(cmd);      
+                    exec_cmd.on('exit', function(){
+                        exec('ls -tl "' + final_dest + '"', 
                         function(err, stdout, stderr){
                             // some process 
                             console.log(stdout);    
-                        }
-                    );
-                    console.log("file %s created.", filename_part);
-
+                        });
+                        console.log("file '%s' created.", filename_part);
+                      });
+                    
+                    
                 }
             );
         }

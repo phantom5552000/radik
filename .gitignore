@@ -6,3 +6,5 @@ records
 tmp
 libs
 release
+dist/out-tsc
+
