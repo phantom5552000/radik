@@ -63,29 +63,17 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         let files = [];
         let kl = klaw(this.config.saveDir)
             .on('readable', () => {
-                var item
-                while ((item = kl.read())) {
-                    if (!item.stats.isDirectory()) {
-                        let size;
-                        if(item.stats.size < 1000){
-                            size = item.stats.size + 'B';
-                        } else if(item.stats.size < 1000000){
-                            size = Math.round((item.stats.size / 1000)) + 'KB';
-                        } else {
-                            size = (item.stats.size / 1000000).toFixed(1) + 'MB';
-                        }
-
-                        files.push({
-                            name: path.basename(item.path),
-                            lastUpdate: item.stats.mtime,
-                            size: size,
-                            fullName: item.path
-                        });
-                    }
-                }
+                var item;
+                while ((item = kl.read())) {}
 
             })
             .on('end', () => {
+                files.push({
+                    name: "fav1-name.aac",
+                    lastUpdate: new Date(),
+                    size: "1.8MB",
+                    fullName: "/Users/fav1-full-name.aac"
+                });
                 files.sort((a, b) => {
                     if (a.lastUpdate > b.lastUpdate) {
                         return -1;
