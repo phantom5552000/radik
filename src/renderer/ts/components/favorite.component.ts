@@ -33,7 +33,7 @@ import {Utility} from "../utility";
                         <label class="label">検索</label>
                         <div class="field has-addons">
                             <p class="control">
-                                <input class="input" type="text" name="keyword" [(ngModel)]="keyword" placeholder="検索">
+                                <input class="input" type="text" name="keyword" [(ngModel)]="keyword">
                             </p>
                             <p class="control">
                                 <button class="button" type="button" (click)="onClickSearch()">
