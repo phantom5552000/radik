@@ -3,7 +3,8 @@ import {ConfigService} from '../services/config.service';
 import {IConfig} from '../interfaces/config.interface';
 import {IFavorite} from "../interfaces/favorite.interface";
 import {StateService} from "../services/state.service";
- 
+import {Utility} from "../utility";
+
 
 @Component({
     selector: 'Favorite',
@@ -25,9 +26,34 @@ import {StateService} from "../services/state.service";
                 </tr>
             </tbody>
         </table>
-        
+        <form (ngSubmit)="onSubmit()">
+            <div class="message">
+                <div class="message-body">
+                    <div class="field ">
+                        <label class="label">検索</label>
+                        <div class="field has-addons">
+                            <p class="control">
+                                <input class="input" type="text" name="keyword" [(ngModel)]="keyword" placeholder="検索">
+                            </p>
+                            <p class="control">
+                                <button class="button" type="button" (click)="onClickSearch()">
+                                <span class="icon is-small">
+                                    <i class="fa fa-folder-open-o"></i>
+                                </span>
+                                </button>
+                            </p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="button is-primary">保存</button>
+        </form>　    
     `
 })
+
+
+//  *ngIf="selectedProgram.downloadable">
 export class FavoriteComponent implements OnInit, OnDestroy{
 
     @Output()
@@ -35,7 +61,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
 
     private config:IConfig;
     private files: IFavorite[] = [];
-
+    private keyword: String;
     private sub;
 
     ngOnInit() {
@@ -45,7 +71,6 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                this.refresh();
            }
         });
-
     }
 
     ngOnDestroy(){
@@ -113,4 +138,33 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     private onClick = (library:IFavorite) =>{
         this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
     }
+    private onClickDownload = () =>{
+        console.log("on click");
+    }
+    /**
+     * 録音パス選択
+     */
+    private onClickSearch = () =>{
+        console.log("onClickSearch(%s)", this.keyword);
+        /*
+        let dialog = require('electron').remote.dialog;
+        dialog.showOpenDialog(null, {
+            properties: ['openDirectory']
+        }, (dir) => {
+            this.config.saveDir = dir[0];
+            //this.chRef.detectChanges();
+        });
+        */
+    };
+
+    /**
+     * 設定保存
+     */
+    private onSubmit = () => {
+
+        let save = Utility.copy<IConfig>(this.config);
+        localStorage.setItem('config', JSON.stringify(save));
+        this.configService.config.next(save);
+    };
+        
 }
