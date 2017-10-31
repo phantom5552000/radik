@@ -38,7 +38,7 @@ import {Utility} from "../utility";
                             <p class="control">
                                 <button class="button" type="button" (click)="onClickSearch()">
                                 <span class="icon is-small">
-                                    <i class="fa fa-folder-open-o"></i>
+                                    <i class="fa fa-search"></i>
                                 </span>
                                 </button>
                             </p>
@@ -47,9 +47,30 @@ import {Utility} from "../utility";
                     </div>
                 </div>
             </div>
-            <button type="submit" class="button is-primary">保存</button>
         </form>　    
-    `
+        <form (ngSubmit)="onSubmit()">
+        <div class="message">
+            <div class="message-body">
+                <div class="field ">
+                    <label class="label">追加</label>
+                    <div class="field has-addons">
+                        <p class="control">
+                            <input class="input" type="text" name="program" [(ngModel)]="program">
+                        </p>
+                        <p class="control">
+                            <button class="button" type="button" (click)="onClickPlus()">
+                            <span class="icon is-small">
+                                <i class="fa fa-plus"></i>
+                            </span>
+                            </button>
+                        </p>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </form>　    
+`
 })
 
 
@@ -62,6 +83,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     private config:IConfig;
     private files: IFavorite[] = [];
     private keyword: String;
+    private program: String;
     private sub;
 
     ngOnInit() {
@@ -157,6 +179,18 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         */
     };
 
+    private onClickPlus = () =>{
+        console.log("onClickPlus(%s)", this.program);
+        /*
+        let dialog = require('electron').remote.dialog;
+        dialog.showOpenDialog(null, {
+            properties: ['openDirectory']
+        }, (dir) => {
+            this.config.saveDir = dir[0];
+            //this.chRef.detectChanges();
+        });
+        */
+    };
     /**
      * 設定保存
      */
