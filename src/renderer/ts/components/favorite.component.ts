@@ -163,6 +163,10 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         });
         //this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
     }
+    private onClick = (target:IFavorite) =>{
+        console.log("onClick(target='%s'", target.fullName);
+        //this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
+    }
     private onClickDownload = () =>{
         console.log("on click");
     }
