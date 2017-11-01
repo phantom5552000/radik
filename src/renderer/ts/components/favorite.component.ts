@@ -12,14 +12,20 @@ import {Utility} from "../utility";
         <table class="table is-striped is-narrow">
             <tbody>
                 <tr *ngFor="let file of files">
-                    <td>aaa</td>
                     <td>{{file.name}}</td>
                     <td class="datetime">{{file.lastUpdate | date:'yyyy/MM/dd HH:mm:ss'}}</td>
-                    <td>{{file.size}}</td>
                     <td class="has-text-right">
                         <button class="button is-small" type="button" (click)="onClick(file)">
                             <span class="icon">
-                                <i class="fa fa-play-circle" aria-hidden="true"></i>
+                                <i class="fa fa-download" aria-hidden="true"></i>
+                            </span>
+                        </button>
+                    </td>
+                    <td>{{file.size}}</td>
+                    <td class="has-text-right">
+                        <button class="button is-small" type="button" (click)="onClickTrash(file)">
+                            <span class="icon">
+                                <i class="fa fa-trash-o" aria-hidden="true"></i>
                             </span>
                         </button>
                     </td>
@@ -43,33 +49,25 @@ import {Utility} from "../utility";
                                 </button>
                             </p>
                         </div>
-                        
+                    </div>
+                    <div class="field ">
+                        <label class="label">追加</label>
+                        <div class="field has-addons">
+                            <p class="control">
+                                <input class="input" type="text" name="program" [(ngModel)]="program">
+                            </p>
+                            <p class="control">
+                                <button class="button" type="button" (click)="onClickPlus()">
+                                <span class="icon is-small">
+                                    <i class="fa fa-plus"></i>
+                                </span>
+                                </button>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </form>　    
-        <form (ngSubmit)="onSubmit()">
-        <div class="message">
-            <div class="message-body">
-                <div class="field ">
-                    <label class="label">追加</label>
-                    <div class="field has-addons">
-                        <p class="control">
-                            <input class="input" type="text" name="program" [(ngModel)]="program">
-                        </p>
-                        <p class="control">
-                            <button class="button" type="button" (click)="onClickPlus()">
-                            <span class="icon is-small">
-                                <i class="fa fa-plus"></i>
-                            </span>
-                            </button>
-                        </p>
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
-    </form>　    
 `
 })
 
@@ -157,8 +155,13 @@ export class FavoriteComponent implements OnInit, OnDestroy{
 
         };
 
-    private onClick = (library:IFavorite) =>{
-        this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
+    private onClickTrash = (target:IFavorite) =>{
+        // 全てを削除。一つだけ削除したい場合は、someを使う　
+        //  ref) https://qiita.com/_shimizu/items/b8eac14f399e20599818
+        this.files = this.files.filter(function(v, i) {
+            return (v !== target);
+        });
+        //this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
     }
     private onClickDownload = () =>{
         console.log("on click");
@@ -181,6 +184,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
 
     private onClickPlus = () =>{
         console.log("onClickPlus(%s)", this.program);
+        this.files.push(this.files[0]);
         /*
         let dialog = require('electron').remote.dialog;
         dialog.showOpenDialog(null, {
