@@ -4,7 +4,10 @@ import {IConfig} from '../interfaces/config.interface';
 import {IFavorite} from "../interfaces/favorite.interface";
 import {StateService} from "../services/state.service";
 import {Utility} from "../utility";
-
+import {RadikoService} from '../services/radiko.service';
+import {IStation, IRegion} from '../interfaces/station.interface';
+import {IProgram} from '../interfaces/program.interface';
+import { parseString } from 'xml2js';
 
 @Component({
     selector: 'Favorite',
@@ -39,7 +42,7 @@ import {Utility} from "../utility";
                         <label class="label">検索</label>
                         <div class="field has-addons">
                             <p class="control">
-                                <input class="input" type="text" name="keyword" [(ngModel)]="keyword">
+                                <input class="input" type="text" name="keyword" value="ROCKADOM" [(ngModel)]="keyword">
                             </p>
                             <p class="control">
                                 <button class="button" type="button" (click)="onClickSearch()">
@@ -74,6 +77,8 @@ import {Utility} from "../utility";
 
 //  *ngIf="selectedProgram.downloadable">
 export class FavoriteComponent implements OnInit, OnDestroy{
+    @Input()
+    private station:IStation;
 
     @Output()
     private play:EventEmitter<IFavorite> = new EventEmitter<IFavorite>();
@@ -83,7 +88,9 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     private keyword: String;
     private program: String;
     private sub;
-
+    private programs = {};
+    private dates:number[] = [];
+    
     ngOnInit() {
         this.sub = this.stateService.isDownloading.subscribe(value =>{
            if(!value){
@@ -99,6 +106,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
 
     constructor(
         private stateService: StateService,
+        private radikoService: RadikoService,
         private configService: ConfigService){}
 
     public refresh = () => {
@@ -175,6 +183,14 @@ export class FavoriteComponent implements OnInit, OnDestroy{
      */
     private onClickSearch = () =>{
         console.log("onClickSearch(%s)", this.keyword);
+        this.station =  {
+            asciiName: "",
+            href: "",
+            id: "FM-FUJI",
+            logo: "",
+            name: "",
+        };
+        this.refreshProgramList(this.keyword);
         /*
         let dialog = require('electron').remote.dialog;
         dialog.showOpenDialog(null, {
@@ -208,5 +224,46 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         localStorage.setItem('config', JSON.stringify(save));
         this.configService.config.next(save);
     };
-        
+
+    private refreshProgramList = (keyword) =>{
+        console.log("Entered refreshProgramList");
+        this.radikoService.getPrograms(this.station.id).subscribe(res => {
+            parseString(res.text(), (err, result) => {
+                let programs = {};
+                this.programs = {};
+                this.dates = [];
+
+                let now = new Date();
+                let now_date = parseInt(now.getFullYear() +  ('00' + (now.getMonth() + 1)).substr(-2, 2) + ('00' + now.getDate()).substr(-2, 2) + ('00' + now.getHours()).substr(-2, 2) + ('00' + now.getMinutes()).substr(-2, 2) + '00', 10);
+
+                result.radiko.stations[0].station[0].progs.forEach(progs => {
+                    
+                    let date =progs.prog[0].$.ft.substr(0, 8);
+                    this.dates.push(date);
+                    progs.prog.forEach(prog => {
+                        let p = 
+                        {
+                            ft: prog.$.ft, to: prog.$.to,
+                            img: prog.img[0],     info: prog.info[0],
+                            pfm: prog.pfm[0],     title: prog.title[0],
+                            tsInNg: prog.ts_in_ng[0],
+                            tsOutNg: prog.ts_out_ng[0],
+                            downloadable: parseInt(prog.$.to, 10) < now_date
+                        };
+                        //console.log("t %s %s", prog.title[0], keyword);
+                        if (prog.title[0].toUpperCase() == keyword.toUpperCase()
+                            && p.downloadable == true){
+                            console.log("found ", p);
+                        }
+                    });
+                    this.programs = programs;
+                });
+                //programs["5"]["20171027"][0].title="ON THE WIND"
+
+                console.log("favorite");
+                console.log(programs);
+            });
+        });
+    }
 }
+
