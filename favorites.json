@@ -1,0 +1,32 @@
+[
+    {
+        "station_id": "FM-FUJI",
+        "station_name": "",
+        "program": {
+            "ft": "20171029200000",
+            "to": "20171029223000",
+            "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/FM-FUJI/20170918142737.jpg",
+            "info": "<a href=\"http://www.fmfuji.jp/mail.php?cd=37\" title=\"ROCKADOM”\" target=\"_blank\">rockadom@fmfuji.jp</a><br />twitterアカウントは「<a href=\"http://twitter.com/#!/jocvfm\">@jocvfm</a>」",
+            "pfm": "伊藤政則 ",
+            "title": "ROCKADOM",
+            "tsInNg": "0",
+            "tsOutNg": "0",
+            "downloadable": false
+        }
+    },
+    {
+        "station_id": "TBS",
+        "station_name": "",
+        "program": {
+            "ft": "20171029115500",
+            "to": "20171029120000",
+            "img": "",
+            "info": "",
+            "pfm": "",
+            "title": "小森谷徹 週刊！暮らしの便利帳",
+            "tsInNg": "0",
+            "tsOutNg": "0",
+            "downloadable": false
+        }
+    }
+]

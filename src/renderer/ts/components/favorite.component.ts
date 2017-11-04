@@ -14,26 +14,27 @@ import { parseString } from 'xml2js';
     template: `
         <table class="table is-striped is-narrow">
             <tbody>
-                <tr *ngFor="let file of files">
-                    <td>{{file.station_name}}</td>
-                    <td>{{file.program.title}}</td>
-                    <td>{{file.program.ft}}</td>
+                <tr *ngFor="let fav of favorites">
+                    <td>{{fav.station_name}}</td>
+                    <td>{{fav.station_id}}</td>
+                    <td>{{fav.program.title}}</td>
+                    <td>{{fav.program.ft}}</td>
                     <td class="has-text-right">
-                        <button class="button is-small" type="button" (click)="onClick(file)">
+                        <button class="button is-small" type="button" (click)="onClickDownload(fav)">
                             <span class="icon">
                                 <i class="fa fa-download" aria-hidden="true"></i>
                             </span>
                         </button>
                     </td>
                     <td class="has-text-right">
-                        <button class="button is-small" type="button" (click)="onClickTrash(file)">
+                        <button class="button is-small" type="button" (click)="onClickTrash(fav)">
                             <span class="icon">
                                 <i class="fa fa-refresh" aria-hidden="true"></i>
                             </span>
                         </button>
                     </td>
                     <td class="has-text-right">
-                    <button class="button is-small" type="button" (click)="onClickTrash(file)">
+                    <button class="button is-small" type="button" (click)="onClickTrash(fav)">
                         <span class="icon">
                             <i class="fa fa-trash-o" aria-hidden="true"></i>
                         </span>
@@ -98,16 +99,24 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     private station:IStation;
 
     @Output()
+    private changeStatus:EventEmitter<boolean> = new EventEmitter<boolean>();
+
+    @Output()
     private play:EventEmitter<IFavorite> = new EventEmitter<IFavorite>();
 
+    private loading = false;
+    
     private config:IConfig;
-    private files: IFavorite[] = [];
+    private favorites: IFavorite[] = [];
     private keyword: String;
     private program: String;
     private sub;
     //private programs = {};
     //private dates:number[] = [];
     private found_program: IFavorite;
+    private fs = require('fs');
+    private jsonfile = require('jsonfile');
+    private favorite_file_path = "./favorites.json";
     
     ngOnInit() {
         this.sub = this.stateService.isDownloading.subscribe(value =>{
@@ -152,73 +161,104 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         private configService: ConfigService){}
 
     public refresh = () => {
-        // naka
-        var fs = require('fs');
-        var jsonfile = require('jsonfile');
-        var favorite_file_path = "./favorites.json";
-        //let favorites = [];
-        let favorites: IFavorite[] = [];
-        
-        console.log("favorites_file_path: '%s'", favorite_file_path);
-        fs.access(favorite_file_path, function (err) {
-            if (err){
-                console.log("'%s' does not exist.", favorite_file_path);
-                var data = [
-                    { name: "Rockadam(dummy).aac", lastUpdate: new Date(), size:"1.8MB", fullName:"DummyFullName.aac" },
-                  ];
-                jsonfile.writeFile(favorite_file_path, data, {
-                    encoding: 'utf-8', replacer: null, spaces: '    '
-                    }, 
-                    function (err) {
-                        if(err){
-                            console.log("writeFile err=%s", err);
-                        }else{
-                            console.log("'%s' has been written.", favorite_file_path);
-                        }
-                    });
-                }
-            });
-        jsonfile.readFile(favorite_file_path, {
-                encoding: 'utf-8', reviver: null, throws: true
-            }, function (err, data) {
-                if(err){
-                    console.log("readFile err=%s", err);
-                }else{
-                    console.log("read file %s", favorite_file_path);
-                    //console.log(this);
-                    //console.log(this.files);
-                    for(var i=0; i<data.length; i++){
-                        favorites.push({
-                            station_id: null,
-                            station_name: null,
-                            program: null
-                        });
-                    }
-                    console.log("favorites_list num=%d", favorites.length);
-                    console.log(favorites);
-                    //本当はここでthis.filesを参照したいが、ここではthis==undefined
-                }
-            });
-            this.files = favorites;
-            console.log(this.files);
-
-        };
-
+        console.log("favorites_file_path: '%s'", this.favorite_file_path);
+        this.favorites = this.jsonfile.readFileSync(this.favorite_file_path, {
+            encoding: 'utf-8', 
+            reviver: null, 
+            throws: true
+        });
+        /* // 本当は非同期で実装したいが、以下では動作しない
+        var favorites =[];
+        this.jsonfile.readFile(this.favorite_file_path, {
+            encoding: 'utf-8', reviver: null, throws: true
+        }, function (err, data) {
+            if(err){
+                console.log("readFile err=%s", err);
+            }else{
+                favorites = data;
+                //console.log("read file %s", this.favorite_file_path);
+                //本当はここでthis.favoritesを参照したいが、ここではthis==undefined
+            }
+        });
+        this.favorites = favorites;
+        console.log(this.favorites);
+        */
+    };
+    
     private onClickTrash = (target:IFavorite) =>{
         // 全てを削除。一つだけ削除したい場合は、someを使う　
         //  ref) https://qiita.com/_shimizu/items/b8eac14f399e20599818
-        this.files = this.files.filter(function(v, i) {
+        this.favorites = this.favorites.filter(function(v, i) {
             return (v !== target);
         });
+        this.writeFile();
         //this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
     }
-    private onClick = (target:IFavorite) =>{
-        console.log("onClick(target='%s'", target.program.title);
+    private onClickDownload = (target:IFavorite) =>{
+        console.log("onClick('%s')", target.program.title);
+        console.log(target);
+        
+        if(!this.loading) {
+            this.loading = true;
+
+            this.stateService.isDownloading.next(true);
+
+            this.changeStatus.emit(true);
+
+            let complete = false;
+            let downloadProgress = '';
+
+            let timer = setInterval(() =>{
+                if(complete){
+                    clearInterval(timer);
+                    this.stateService.isDownloading.next(false);
+                }
+                this.stateService.downloadProgress.next(downloadProgress);
+
+            }, 1000);
+
+            let path = require('path');
+            
+            var final_dest = "/Users/isamunakagawa/Google ドライブ/01-radiko/01-mac/01-el"
+            var filename_tmp  = path.join(this.config.saveDir, target.station_id, target.program.ft.substr(0, 8), target.program.title + ".aac");
+            var filename_part = path.join(final_dest, target.program.ft.substr(0,8) + "-"  +target.program.title + ".aac");
+                                          
+            console.log("filename tmp:  "+ filename_tmp)                
+            console.log("filename part: "+ filename_part) 
+
+
+            this.radikoService.getTimeFree(target.station_id, target.program, this.config.saveDir, (mes) => {
+                downloadProgress = mes;
+
+            }, () => {
+                this.loading = false;
+                console.log("finished.")
+
+                complete = true;
+                /*
+                var exec = require('child_process').exec;
+                var sprintf = require("sprintf-js").sprintf, vsprintf = require("sprintf-js").vsprintf
+                var cmd = sprintf("mv '%1$s' '%2$s'", filename_tmp, filename_part);
+                console.log(cmd);
+                var exec_cmd = exec(cmd);      
+                exec_cmd.on('exit', function(){
+                    exec('ls -tl "' + final_dest + '"', 
+                    function(err, stdout, stderr){
+                        // some process 
+                        console.log(stdout);    
+                    });
+                    console.log("file '%s' created.", filename_part);
+                });
+                */
+                
+            });
+        }
+    
+
+        /** */
         //this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
     }
-    private onClickDownload = () =>{
-        console.log("on click");
-    }
+
     /**
      * 録音パス選択
      */
@@ -236,10 +276,23 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         });
         */
     };
-
+    private writeFile = () =>{
+        this.jsonfile.writeFile(this.favorite_file_path, this.favorites, {
+            encoding: 'utf-8', replacer: null, spaces: '    '
+        }, function (err) {
+            if(err){
+                console.log("writeFile err=%s", err);
+            }else{
+                console.log("'%s' has been written.", this.favorite_file_path);
+            }
+        });
+    };
     private onClickPlus = () =>{
         console.log("onClickPlus(%s)", this.program);
-        this.files.push(this.files[0]);
+        this.favorites.push(this.found_program);
+        this.writeFile();
+    }
+
         /*
         let dialog = require('electron').remote.dialog;
         dialog.showOpenDialog(null, {
@@ -249,7 +302,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
             //this.chRef.detectChanges();
         });
         */
-    };
+    
     /**
      * 設定保存
      *//*
