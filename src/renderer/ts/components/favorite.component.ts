@@ -15,8 +15,9 @@ import { parseString } from 'xml2js';
         <table class="table is-striped is-narrow">
             <tbody>
                 <tr *ngFor="let file of files">
-                    <td>{{file.name}}</td>
-                    <td class="datetime">{{file.lastUpdate | date:'yyyy/MM/dd HH:mm:ss'}}</td>
+                    <td>{{file.station_name}}</td>
+                    <td>{{file.program.title}}</td>
+                    <td>{{file.program.ft}}</td>
                     <td class="has-text-right">
                         <button class="button is-small" type="button" (click)="onClick(file)">
                             <span class="icon">
@@ -24,15 +25,21 @@ import { parseString } from 'xml2js';
                             </span>
                         </button>
                     </td>
-                    <td>{{file.size}}</td>
                     <td class="has-text-right">
                         <button class="button is-small" type="button" (click)="onClickTrash(file)">
                             <span class="icon">
-                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                <i class="fa fa-refresh" aria-hidden="true"></i>
                             </span>
                         </button>
                     </td>
-                </tr>
+                    <td class="has-text-right">
+                    <button class="button is-small" type="button" (click)="onClickTrash(file)">
+                        <span class="icon">
+                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        </span>
+                    </button>
+                </td>
+            </tr>
             </tbody>
         </table>
         <form (ngSubmit)="onSubmit()">
@@ -42,7 +49,10 @@ import { parseString } from 'xml2js';
                         <label class="label">検索</label>
                         <div class="field has-addons">
                             <p class="control">
-                                <input class="input" type="text" name="keyword" value="ROCKADOM" [(ngModel)]="keyword">
+                                <input class="input" type="text" name="station.id" [(ngModel)]="station.id">
+                            </p>
+                            <p class="control">
+                                <input class="input" type="text" name="keyword" [(ngModel)]="keyword">
                             </p>
                             <p class="control">
                                 <button class="button" type="button" (click)="onClickSearch()">
@@ -57,7 +67,13 @@ import { parseString } from 'xml2js';
                         <label class="label">追加</label>
                         <div class="field has-addons">
                             <p class="control">
-                                <input class="input" type="text" name="program" [(ngModel)]="program">
+                                <input class="input" type="text" name="found_program.station_id" [(ngModel)]="found_program.station_id">
+                            </p>
+                            <p class="control">
+                                <input class="input" type="text" name="found_program.program.title" [(ngModel)]="found_program.program.title">
+                            </p>
+                            <p class="control">
+                                <input class="input" type="text" name="found_program.program.ft" [(ngModel)]="found_program.program.ft">
                             </p>
                             <p class="control">
                                 <button class="button" type="button" (click)="onClickPlus()">
@@ -73,6 +89,7 @@ import { parseString } from 'xml2js';
         </form>　    
 `
 })
+//<input class="input" type="text" name="found_program.station_id" [(ngModel)]=>"found_program.station_id">
 
 
 //  *ngIf="selectedProgram.downloadable">
@@ -88,8 +105,9 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     private keyword: String;
     private program: String;
     private sub;
-    private programs = {};
-    private dates:number[] = [];
+    //private programs = {};
+    //private dates:number[] = [];
+    private found_program: IFavorite;
     
     ngOnInit() {
         this.sub = this.stateService.isDownloading.subscribe(value =>{
@@ -98,6 +116,30 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                this.refresh();
            }
         });
+        //this.station.id = "FM-FUJI";
+        this.station =  {
+            asciiName: "",
+            href: "",
+            id: "FM-FUJI",
+            logo: "",
+            name: "",
+        };        
+        this.keyword = "Rockadom";
+        this.found_program = { // naka 初期化はもっと良い方法があるはず
+            station_id: "",
+            station_name: "",
+            program:{
+                ft: "",
+                to: "",
+                img: "",
+                info: "",
+                pfm: "",
+                title: "",
+                tsInNg: 0,
+                tsOutNg: 1,
+                downloadable: false
+            },
+        };
     }
 
     ngOnDestroy(){
@@ -147,10 +189,9 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                     //console.log(this.files);
                     for(var i=0; i<data.length; i++){
                         favorites.push({
-                            name: data[i].name,
-                            lastUpdate: data[i].lastUpdate,
-                            size: data[i].size,
-                            fullName: data[i].fullName
+                            station_id: null,
+                            station_name: null,
+                            program: null
                         });
                     }
                     console.log("favorites_list num=%d", favorites.length);
@@ -172,7 +213,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         //this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
     }
     private onClick = (target:IFavorite) =>{
-        console.log("onClick(target='%s'", target.fullName);
+        console.log("onClick(target='%s'", target.program.title);
         //this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
     }
     private onClickDownload = () =>{
@@ -183,14 +224,8 @@ export class FavoriteComponent implements OnInit, OnDestroy{
      */
     private onClickSearch = () =>{
         console.log("onClickSearch(%s)", this.keyword);
-        this.station =  {
-            asciiName: "",
-            href: "",
-            id: "FM-FUJI",
-            logo: "",
-            name: "",
-        };
-        this.refreshProgramList(this.keyword);
+
+        this.searchProgram(this.keyword);
         /*
         let dialog = require('electron').remote.dialog;
         dialog.showOpenDialog(null, {
@@ -217,21 +252,21 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     };
     /**
      * 設定保存
-     */
+     *//*
     private onSubmit = () => {
 
         let save = Utility.copy<IConfig>(this.config);
         localStorage.setItem('config', JSON.stringify(save));
         this.configService.config.next(save);
     };
-
-    private refreshProgramList = (keyword) =>{
-        console.log("Entered refreshProgramList");
+*/
+    private searchProgram = (keyword) =>{
+        console.log("Entered searchProgram");
         this.radikoService.getPrograms(this.station.id).subscribe(res => {
             parseString(res.text(), (err, result) => {
                 let programs = {};
-                this.programs = {};
-                this.dates = [];
+                //this.programs = {};
+                //this.dates = [];
 
                 let now = new Date();
                 let now_date = parseInt(now.getFullYear() +  ('00' + (now.getMonth() + 1)).substr(-2, 2) + ('00' + now.getDate()).substr(-2, 2) + ('00' + now.getHours()).substr(-2, 2) + ('00' + now.getMinutes()).substr(-2, 2) + '00', 10);
@@ -239,7 +274,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                 result.radiko.stations[0].station[0].progs.forEach(progs => {
                     
                     let date =progs.prog[0].$.ft.substr(0, 8);
-                    this.dates.push(date);
+                    //this.dates.push(date);
                     progs.prog.forEach(prog => {
                         let p = 
                         {
@@ -253,10 +288,21 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                         //console.log("t %s %s", prog.title[0], keyword);
                         if (prog.title[0].toUpperCase() == keyword.toUpperCase()
                             && p.downloadable == true){
+                            this.found_program.program.ft = p.ft;
+                            this.found_program.program.to = p.to;
+                            this.found_program.program.img  = p.img;
+                            this.found_program.program.info = p.info;
+                            this.found_program.program.pfm = p.pfm;
+                            this.found_program.program.title = p.title;
+                            this.found_program.program.tsInNg = p.tsInNg;
+                            this.found_program.program.tsOutNg = p.tsOutNg;
+                            this.found_program.station_id = this.station.id;
+                            this.found_program.station_name = ""; 
+                            
                             console.log("found ", p);
                         }
                     });
-                    this.programs = programs;
+                    //this.programs = programs;
                 });
                 //programs["5"]["20171027"][0].title="ON THE WIND"
 
