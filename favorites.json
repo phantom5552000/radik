@@ -28,5 +28,65 @@
             "tsOutNg": "0",
             "downloadable": false
         }
+    },
+    {
+        "station_id": "FM-FUJI",
+        "station_name": "",
+        "program": {
+            "ft": "20171029200000",
+            "to": "20171029223000",
+            "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/FM-FUJI/20170918142737.jpg",
+            "info": "<a href=\"http://www.fmfuji.jp/mail.php?cd=37\" title=\"ROCKADOM”\" target=\"_blank\">rockadom@fmfuji.jp</a><br />twitterアカウントは「<a href=\"http://twitter.com/#!/jocvfm\">@jocvfm</a>」",
+            "pfm": "伊藤政則 ",
+            "title": "ROCKADOM",
+            "tsInNg": "0",
+            "tsOutNg": "0",
+            "downloadable": false
+        }
+    },
+    {
+        "station_id": "802",
+        "station_name": "",
+        "program": {
+            "ft": "20171104000000",
+            "to": "20171104010000",
+            "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/802/cl_20171001050003_8297123.png",
+            "info": "",
+            "pfm": "伊藤 政則",
+            "title": "ROCK ON(24時台)",
+            "tsInNg": "0",
+            "tsOutNg": "0",
+            "downloadable": false
+        }
+    },
+    {
+        "station_id": "802",
+        "station_name": "",
+        "program": {
+            "ft": "20171104010000",
+            "to": "20171104020000",
+            "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/802/cl_20171001050003_8297123.png",
+            "info": "",
+            "pfm": "伊藤 政則",
+            "title": "ROCK ON(25時台)",
+            "tsInNg": "0",
+            "tsOutNg": "0",
+            "downloadable": false
+        }
+    },
+    {
+        "station_id": "802",
+        "station_name": "",
+        "program": {
+            "ft": "20171104020000",
+            "to": "20171104030000",
+            "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/802/cl_20171001050003_8297123.png",
+            "info": "",
+            "pfm": "伊藤 政則",
+            "title": "ROCK ON(26時台)",
+            "tsInNg": "0",
+            "tsOutNg": "0",
+            "downloadable": false
+        }
     }
 ]

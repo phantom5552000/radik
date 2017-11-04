@@ -288,8 +288,10 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         });
     };
     private onClickPlus = () =>{
-        console.log("onClickPlus(%s)", this.program);
-        this.favorites.push(this.found_program);
+        console.log("onClickPlus(%s)", this.found_program.program.title);
+        let save = Utility.copy<IFavorite>(this.found_program);
+        
+        this.favorites.push(save);
         this.writeFile();
     }
 
@@ -339,7 +341,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                             downloadable: parseInt(prog.$.to, 10) < now_date
                         };
                         //console.log("t %s %s", prog.title[0], keyword);
-                        if (prog.title[0].toUpperCase() == keyword.toUpperCase()
+                        if (prog.title[0].toUpperCase().indexOf(keyword.toUpperCase()) != -1
                             && p.downloadable == true){
                             this.found_program.program.ft = p.ft;
                             this.found_program.program.to = p.to;

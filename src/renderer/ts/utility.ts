@@ -11,8 +11,8 @@ export class Utility{
         //for(let key in src){
         //    res.[key] = src[key];
         //}
-        let res = Object.assign({}, src); 
-
+        //let res = Object.assign({}, src); 
+        let res = JSON.parse(JSON.stringify(src))
         return res as T;
     };
 
