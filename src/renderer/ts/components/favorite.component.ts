@@ -90,10 +90,7 @@ import { parseString } from 'xml2js';
         </form>　    
 `
 })
-//<input class="input" type="text" name="found_program.station_id" [(ngModel)]=>"found_program.station_id">
 
-
-//  *ngIf="selectedProgram.downloadable">
 export class FavoriteComponent implements OnInit, OnDestroy{
     @Input()
     private station:IStation;
@@ -184,14 +181,6 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         console.log(this.favorites);
         */
     };
-    
-    private onClickRefresh = (target:IFavorite) =>{
-        console.log("onClickRefresh('%s')", target.program.title);
-        // favorite list のスタート時刻を更新する
-        this.writeFile();
-        //this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
-    }
-    
 
     private onClickTrash = (target:IFavorite) =>{
         // 全てを削除。一つだけ削除したい場合は、someを使う　
@@ -257,37 +246,17 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                     });
                     console.log("file '%s' created.", filename_part);
                 });
-                
-                
             });
         }
-    
-
-        /** */
-        //this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
     }
 
-    /**
-     * 録音パス選択
-     */
     private onClickSearch = () =>{
         console.log("onClickSearch(%s)", this.keyword);
-        var f = this.found_program;
-        this.searchProgram(this.keyword, this, function(fc, found){
+        this.searchProgram(this.station.id, this.keyword, this, function(fc, found){
             console.log("searchProgram()");
             console.log(found);
-            fc.found_program = found;
+            fc.found_program = found; // fc==this, モット良いやり方があるはず
         });
-        //this.found_program = f;
-        /*
-        let dialog = require('electron').remote.dialog;
-        dialog.showOpenDialog(null, {
-            properties: ['openDirectory']
-        }, (dir) => {
-            this.config.saveDir = dir[0];
-            //this.chRef.detectChanges();
-        });
-        */
     };
     private writeFile = () =>{
         this.jsonfile.writeFile(this.favorite_file_path, this.favorites, {
@@ -300,6 +269,23 @@ export class FavoriteComponent implements OnInit, OnDestroy{
             }
         });
     };
+    private onClickRefresh = (target:IFavorite) =>{
+        // favorite list のスタート時刻を更新する
+        console.log("onClickRefresh('%s')", target.program.title);
+        this.searchProgram(target.station_id, target.program.title, this, function(fc, found){
+            console.log("searchProgram()");
+            console.log(found);
+            //fc.found_program = found; // fc==this, モット良いやり方があるはず
+            target = found;
+            fc.favorites.forEach( function( value, index, array ) {
+                if(value.station_id == target.station_id
+                && value.program.title == target.program.title){
+                    array[index] = found;
+                }
+            });
+            fc.writeFile();
+        });
+    }
     private onClickPlus = () =>{
         console.log("onClickPlus(%s)", this.found_program.program.title);
         let save = Utility.copy<IFavorite>(this.found_program);
@@ -308,27 +294,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         this.writeFile();
     }
 
-        /*
-        let dialog = require('electron').remote.dialog;
-        dialog.showOpenDialog(null, {
-            properties: ['openDirectory']
-        }, (dir) => {
-            this.config.saveDir = dir[0];
-            //this.chRef.detectChanges();
-        });
-        */
-    
-    /**
-     * 設定保存
-     *//*
-    private onSubmit = () => {
-
-        let save = Utility.copy<IConfig>(this.config);
-        localStorage.setItem('config', JSON.stringify(save));
-        this.configService.config.next(save);
-    };
-*/
-    private searchProgram = (keyword, fc, callback) =>{
+    private searchProgram = (station_id, keyword, fc, callback) =>{
         // コールバックでfound_programを返すよう、変更
 
         var found = { // naka 初期化はもっと良い方法があるはず
@@ -348,7 +314,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         };
 
         console.log("Entered searchProgram");
-        this.radikoService.getPrograms(this.station.id).subscribe(res => {
+        this.radikoService.getPrograms(station_id).subscribe(res => {
             parseString(res.text(), (err, result) => {
                 let now = new Date();
                 let now_date = parseInt(now.getFullYear() +  ('00' + (now.getMonth() + 1)).substr(-2, 2) + ('00' + now.getDate()).substr(-2, 2) + ('00' + now.getHours()).substr(-2, 2) + ('00' + now.getMinutes()).substr(-2, 2) + '00', 10);
@@ -371,7 +337,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                         if (prog.title[0].toUpperCase().indexOf(keyword.toUpperCase()) != -1
                             && p.downloadable == true){
                             found.program = p
-                            found.station_id = this.station.id;
+                            found.station_id = station_id;
                             found.station_name = ""; 
                             //console.log("found p ", p);
                         }
