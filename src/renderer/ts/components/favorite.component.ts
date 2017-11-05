@@ -186,11 +186,13 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     };
     
     private onClickRefresh = (target:IFavorite) =>{
+        console.log("onClickRefresh('%s')", target.program.title);
         // favorite list のスタート時刻を更新する
         this.writeFile();
         //this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
     }
     
+
     private onClickTrash = (target:IFavorite) =>{
         // 全てを削除。一つだけ削除したい場合は、someを使う　
         //  ref) https://qiita.com/_shimizu/items/b8eac14f399e20599818
