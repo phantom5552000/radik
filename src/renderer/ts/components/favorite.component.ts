@@ -272,8 +272,13 @@ export class FavoriteComponent implements OnInit, OnDestroy{
      */
     private onClickSearch = () =>{
         console.log("onClickSearch(%s)", this.keyword);
-
-        this.searchProgram(this.keyword);
+        var f = this.found_program;
+        this.searchProgram(this.keyword, this, function(fc, found){
+            console.log("searchProgram()");
+            console.log(found);
+            fc.found_program = found;
+        });
+        //this.found_program = f;
         /*
         let dialog = require('electron').remote.dialog;
         dialog.showOpenDialog(null, {
@@ -323,14 +328,28 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         this.configService.config.next(save);
     };
 */
-    private searchProgram = (keyword) =>{
+    private searchProgram = (keyword, fc, callback) =>{
+        // コールバックでfound_programを返すよう、変更
+
+        var found = { // naka 初期化はもっと良い方法があるはず
+            station_id: "",
+            station_name: "",
+            program:{
+                ft: "",
+                to: "",
+                img: "",
+                info: "",
+                pfm: "",
+                title: "",
+                tsInNg: 0,
+                tsOutNg: 1,
+                downloadable: false
+            },
+        };
+
         console.log("Entered searchProgram");
         this.radikoService.getPrograms(this.station.id).subscribe(res => {
             parseString(res.text(), (err, result) => {
-                let programs = {};
-                //this.programs = {};
-                //this.dates = [];
-
                 let now = new Date();
                 let now_date = parseInt(now.getFullYear() +  ('00' + (now.getMonth() + 1)).substr(-2, 2) + ('00' + now.getDate()).substr(-2, 2) + ('00' + now.getHours()).substr(-2, 2) + ('00' + now.getMinutes()).substr(-2, 2) + '00', 10);
 
@@ -351,26 +370,16 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                         //console.log("t %s %s", prog.title[0], keyword);
                         if (prog.title[0].toUpperCase().indexOf(keyword.toUpperCase()) != -1
                             && p.downloadable == true){
-                            this.found_program.program.ft = p.ft;
-                            this.found_program.program.to = p.to;
-                            this.found_program.program.img  = p.img;
-                            this.found_program.program.info = p.info;
-                            this.found_program.program.pfm = p.pfm;
-                            this.found_program.program.title = p.title;
-                            this.found_program.program.tsInNg = p.tsInNg;
-                            this.found_program.program.tsOutNg = p.tsOutNg;
-                            this.found_program.station_id = this.station.id;
-                            this.found_program.station_name = ""; 
-                            
-                            console.log("found ", p);
+                            found.program = p
+                            found.station_id = this.station.id;
+                            found.station_name = ""; 
+                            //console.log("found p ", p);
                         }
                     });
-                    //this.programs = programs;
                 });
                 //programs["5"]["20171027"][0].title="ON THE WIND"
-
-                console.log("favorite");
-                console.log(programs);
+                callback(fc, found);
+                //console.log("favorite");
             });
         });
     }
