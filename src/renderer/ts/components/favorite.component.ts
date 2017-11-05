@@ -235,7 +235,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                 console.log("finished.")
 
                 complete = true;
-                /*
+                
                 var exec = require('child_process').exec;
                 var sprintf = require("sprintf-js").sprintf, vsprintf = require("sprintf-js").vsprintf
                 var cmd = sprintf("mv '%1$s' '%2$s'", filename_tmp, filename_part);
@@ -249,7 +249,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                     });
                     console.log("file '%s' created.", filename_part);
                 });
-                */
+                
                 
             });
         }

@@ -157,8 +157,18 @@ export class RadikoService{
                         this.ffmpeg.stdout.on('data', (data) => {
                         });
                         this.ffmpeg.stderr.on('data', (data) => {
+                            /**
+                             * File 'records/TBS/20171029/小森谷徹 週刊！暮らしの便利帳.aac' already exists. Overwrite ? [y/N] "
+                             */
+                            let existing = 'already exists. Overwrite ?';
                             let mes = data.toString();
-                            if(mes.indexOf('size') != -1){
+                            if(mes.indexOf(existing) != -1){
+                                console.log(mes);
+                                this.ffmpeg.kill();
+                                this.ffmpeg = null;
+                                console.log("!!! ffmpeg terminated. !!!")
+                                callback();
+                            }else if(mes.indexOf('size') != -1){
 
                                 let m = mes.match(/time=([0-9:.]+)/);
                                 if(m[1]){
@@ -171,10 +181,10 @@ export class RadikoService{
                              //   progress(mes);
                             }
                         });
-                         this.ffmpeg.on('exit', () => {
-                             this.ffmpeg = null;
-                             callback();
-                         });
+                        this.ffmpeg.on('exit', () => {
+                            this.ffmpeg = null;
+                            callback();
+                        });
 
                     } else {
                         callback(m3u8);
