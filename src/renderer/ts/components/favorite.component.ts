@@ -27,7 +27,7 @@ import { parseString } from 'xml2js';
                         </button>
                     </td>
                     <td class="has-text-right">
-                        <button class="button is-small" type="button" (click)="onClickTrash(fav)">
+                        <button class="button is-small" type="button" (click)="onClickRefresh(fav)">
                             <span class="icon">
                                 <i class="fa fa-refresh" aria-hidden="true"></i>
                             </span>
@@ -184,6 +184,12 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         console.log(this.favorites);
         */
     };
+    
+    private onClickRefresh = (target:IFavorite) =>{
+        // favorite list のスタート時刻を更新する
+        this.writeFile();
+        //this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
+    }
     
     private onClickTrash = (target:IFavorite) =>{
         // 全てを削除。一つだけ削除したい場合は、someを使う　

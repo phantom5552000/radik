@@ -102,6 +102,7 @@ export class StationListComponent implements OnInit, OnDestroy{
     constructor(private radikoService: RadikoService){}
 
     private onClickStation = (station:IStation) => {
+        console.log("%s, %s selected.", station.name, station.id);
         this.selectedStation = station;
         this.selectStation.emit(station);
     };
