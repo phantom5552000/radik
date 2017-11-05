@@ -41,7 +41,7 @@
             "title": "ROCK ON(26時台)",
             "tsInNg": "0",
             "tsOutNg": "0",
-            "downloadable": false
+            "downloadable": true
         }
     },
     {
@@ -102,6 +102,21 @@
             "tsInNg": "0",
             "tsOutNg": "0",
             "downloadable": false
+        }
+    },
+    {
+        "station_id": "FM-FUJI",
+        "station_name": "",
+        "program": {
+            "ft": "20171105200000",
+            "to": "20171105223000",
+            "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/FM-FUJI/20170918142737.jpg",
+            "info": "<a href=\"http://www.fmfuji.jp/mail.php?cd=37\" title=\"ROCKADOM”\" target=\"_blank\">rockadom@fmfuji.jp</a><br />twitterアカウントは「<a href=\"http://twitter.com/#!/jocvfm\">@jocvfm</a>」",
+            "pfm": "伊藤政則 ",
+            "title": "ROCKADOM",
+            "tsInNg": "0",
+            "tsOutNg": "0",
+            "downloadable": true
         }
     }
 ]
