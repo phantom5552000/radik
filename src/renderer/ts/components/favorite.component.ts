@@ -159,27 +159,16 @@ export class FavoriteComponent implements OnInit, OnDestroy{
 
     public refresh = () => {
         console.log("favorites_file_path: '%s'", this.favorite_file_path);
-        this.favorites = this.jsonfile.readFileSync(this.favorite_file_path, {
-            encoding: 'utf-8', 
-            reviver: null, 
-            throws: true
-        });
-        /* // 本当は非同期で実装したいが、以下では動作しない
-        var favorites =[];
+
         this.jsonfile.readFile(this.favorite_file_path, {
             encoding: 'utf-8', reviver: null, throws: true
-        }, function (err, data) {
+        }, (err, data) => {
             if(err){
                 console.log("readFile err=%s", err);
             }else{
-                favorites = data;
-                //console.log("read file %s", this.favorite_file_path);
-                //本当はここでthis.favoritesを参照したいが、ここではthis==undefined
+                this.favorites = data;
             }
         });
-        this.favorites = favorites;
-        console.log(this.favorites);
-        */
     };
 
     private onClickTrash = (target:IFavorite) =>{
@@ -189,7 +178,6 @@ export class FavoriteComponent implements OnInit, OnDestroy{
             return (v !== target);
         });
         this.writeFile();
-        //this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
     }
     private onClickDownload = (target:IFavorite) =>{
         console.log("onClick('%s')", target.program.title);
@@ -223,10 +211,8 @@ export class FavoriteComponent implements OnInit, OnDestroy{
             console.log("filename tmp:  "+ filename_tmp)                
             console.log("filename part: "+ filename_part) 
 
-
             this.radikoService.getTimeFree(target.station_id, target.program, this.config.saveDir, (mes) => {
                 downloadProgress = mes;
-
             }, () => {
                 this.loading = false;
                 console.log("finished.")
@@ -252,16 +238,16 @@ export class FavoriteComponent implements OnInit, OnDestroy{
 
     private onClickSearch = () =>{
         console.log("onClickSearch(%s)", this.keyword);
-        this.searchProgram(this.station.id, this.keyword, this, function(fc, found){
+        this.searchProgram(this.station.id, this.keyword, (found)　=> {
             console.log("searchProgram()");
             console.log(found);
-            fc.found_program = found; // fc==this, モット良いやり方があるはず
+            this.found_program = found; // アロー関数なので、thisが見える
         });
     };
     private writeFile = () =>{
         this.jsonfile.writeFile(this.favorite_file_path, this.favorites, {
             encoding: 'utf-8', replacer: null, spaces: '    '
-        }, function (err) {
+        },  (err) => {
             if(err){
                 console.log("writeFile err=%s", err);
             }else{
@@ -272,18 +258,18 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     private onClickRefresh = (target:IFavorite) =>{
         // favorite list のスタート時刻を更新する
         console.log("onClickRefresh('%s')", target.program.title);
-        this.searchProgram(target.station_id, target.program.title, this, function(fc, found){
+        this.searchProgram(target.station_id, target.program.title, (found) => {
             console.log("searchProgram()");
             console.log(found);
-            //fc.found_program = found; // fc==this, モット良いやり方があるはず
+            
             target = found;
-            fc.favorites.forEach( function( value, index, array ) {
+            this.favorites.forEach( function( value, index, array ) {
                 if(value.station_id == target.station_id
                 && value.program.title == target.program.title){
                     array[index] = found;
                 }
             });
-            fc.writeFile();
+            this.writeFile();
         });
     }
     private onClickPlus = () =>{
@@ -294,7 +280,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         this.writeFile();
     }
 
-    private searchProgram = (station_id, keyword, fc, callback) =>{
+    private searchProgram = (station_id, keyword, callback) =>{
         // コールバックでfound_programを返すよう、変更
 
         var found = { // naka 初期化はもっと良い方法があるはず
@@ -343,9 +329,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                         }
                     });
                 });
-                //programs["5"]["20171027"][0].title="ON THE WIND"
-                callback(fc, found);
-                //console.log("favorite");
+                callback(found);
             });
         });
     }
