@@ -113,6 +113,9 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     private found_program: IFavorite;
     private fs = require('fs');
     private jsonfile = require('jsonfile');
+    private exec = require('child_process').exec;
+    private sprintf = require("sprintf-js").sprintf, vsprintf = require("sprintf-js").vsprintf
+
     private favorite_file_path = "./favorites.json";
     
     ngOnInit() {
@@ -204,7 +207,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
 
             let path = require('path');
             
-            var final_dest = "/Users/isamunakagawa/Google ドライブ/01-radiko/01-mac/01-el"
+            var final_dest = "/Users/isamunakagawa/Google ドライブ/01-radiko/01-mac/01-el/"
             var filename_tmp  = path.join(this.config.saveDir, target.station_id, target.program.ft.substr(0, 8), target.program.title + ".aac");
             var filename_part = path.join(final_dest, target.program.ft.substr(0,8) + "-"  +target.program.title + ".aac");
                                           
@@ -218,19 +221,11 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                 console.log("finished.")
 
                 complete = true;
-                
-                var exec = require('child_process').exec;
-                var sprintf = require("sprintf-js").sprintf, vsprintf = require("sprintf-js").vsprintf
-                var cmd = sprintf("mv '%1$s' '%2$s'", filename_tmp, filename_part);
+                var cmd = this.sprintf("mv '%1$s' '%2$s'", filename_tmp, filename_part);
                 console.log(cmd);
-                var exec_cmd = exec(cmd);      
-                exec_cmd.on('exit', function(){
-                    exec('ls -tl "' + final_dest + '"', 
-                    function(err, stdout, stderr){
-                        // some process 
-                        console.log(stdout);    
-                    });
-                    console.log("file '%s' created.", filename_part);
+                var exec_cmd = this.exec(cmd);      
+                exec_cmd.on('exit', () => {
+                    Utility.list_files_console(final_dest);
                 });
             });
         }

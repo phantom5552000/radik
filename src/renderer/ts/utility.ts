@@ -60,4 +60,53 @@ export class Utility{
         let duration = Math.round((d2.getTime() - d1.getTime()) / 1000);
         return duration;
     };
+
+    public static list_files(target, callback)
+    {
+        var fs = require('fs');
+        fs.readdir(target, function(err, files){
+            if (err) throw err;
+            var fileList = [];
+            files.filter(function(file){
+                var full_path = target + file;
+                return fs.statSync(full_path).isFile() 
+            }).forEach(function (file) {
+                var full_path = target + file;
+                var fss = fs.statSync(full_path);
+                fileList.push([full_path, fss.ctime, fss.size]);
+            });
+            callback(fileList);
+        });
+    };
+    
+    
+    public static list_files_console(folder)
+    {
+        var path = require('path');
+
+        let dateFormat = {
+            fmt : {
+            "yyyy": function(date) { return date.getFullYear() + ''; },
+            "MM": function(date) { return ('0' + (date.getMonth() + 1)).slice(-2); },
+            "dd": function(date) { return ('0' + date.getDate()).slice(-2); },
+            "hh": function(date) { return ('0' + date.getHours()).slice(-2); },
+            "mm": function(date) { return ('0' + date.getMinutes()).slice(-2); },
+            "ss": function(date) { return ('0' + date.getSeconds()).slice(-2); }
+            },
+            format:(date, format) => {
+                var result = format;
+                for (var key in dateFormat.fmt)
+                    result = result.replace(key, dateFormat.fmt[key](date));
+                return result;
+            }
+        };
+
+        this.list_files(folder, (file_list) => {
+            var sprintf = require("sprintf-js").sprintf;
+            for(var i=0; i < file_list.length; i++){
+                let f = file_list[i];
+                console.log(sprintf("%50s %s %10d", path.basename(f[0]), dateFormat.format(f[1], 'yyyy/MM/dd hh:mm:ss'), f[2]))
+            }
+        });
+    }
 }

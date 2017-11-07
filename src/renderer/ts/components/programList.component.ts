@@ -7,6 +7,7 @@ import {ConfigService} from '../services/config.service';
 import {IConfig} from '../interfaces/config.interface';
 import {ILibrary} from '../interfaces/library.interface';
 import {StateService} from '../services/state.service';
+import {Utility} from "../utility";
 
 @Component({
     selector: 'ProgramList',
@@ -71,6 +72,9 @@ export class ProgramListComponent implements OnInit, OnDestroy, OnChanges{
     private hours = [ 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28 ];
 
     private sub;
+    private exec = require('child_process').exec;
+    private sprintf = require("sprintf-js").sprintf, vsprintf = require("sprintf-js").vsprintf
+
     ngOnInit() {
         this.sub = this.configService.config.subscribe(value =>{
             this.config = value;
@@ -211,7 +215,7 @@ export class ProgramListComponent implements OnInit, OnDestroy, OnChanges{
 
             let path = require('path');
             
-            var final_dest = "/Users/isamunakagawa/Google ドライブ/01-radiko/01-mac/01-el"
+            var final_dest = "/Users/isamunakagawa/Google ドライブ/01-radiko/01-mac/01-el/"
             var filename_tmp  = path.join(this.config.saveDir, this.station.id, this.selectedProgram.ft.substr(0, 8), this.selectedProgram.title + ".aac");
             var filename_part = path.join(final_dest, this.selectedProgram.ft.substr(0,8) + "-"  +this.selectedProgram.title + ".aac");
                                           
@@ -226,21 +230,13 @@ export class ProgramListComponent implements OnInit, OnDestroy, OnChanges{
                     console.log()
 
                     complete = true;
-                    var exec = require('child_process').exec;
-                    var sprintf = require("sprintf-js").sprintf, vsprintf = require("sprintf-js").vsprintf
-                    var cmd = sprintf("mv '%1$s' '%2$s'", filename_tmp, filename_part);
+
+                    var cmd = this.sprintf("mv '%1$s' '%2$s'", filename_tmp, filename_part);
                     console.log(cmd);
-                    var exec_cmd = exec(cmd);      
-                    exec_cmd.on('exit', function(){
-                        exec('ls -tl "' + final_dest + '"', 
-                        function(err, stdout, stderr){
-                            // some process 
-                            console.log(stdout);    
-                        });
-                        console.log("file '%s' created.", filename_part);
-                      });
-                    
-                    
+                    var exec_cmd = this.exec(cmd);      
+                    exec_cmd.on('exit', () => {
+                        Utility.list_files_console(final_dest);
+                    });
                 }
             );
         }
