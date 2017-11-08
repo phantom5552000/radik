@@ -105,7 +105,7 @@ export class Utility{
             var sprintf = require("sprintf-js").sprintf;
             for(var i=0; i < file_list.length; i++){
                 let f = file_list[i];
-                console.log(sprintf("%50s %s %10d", path.basename(f[0]), dateFormat.format(f[1], 'yyyy/MM/dd hh:mm:ss'), f[2]))
+                console.log(sprintf("%s %10d %s ", dateFormat.format(f[1], 'yyyy/MM/dd hh:mm:ss'), f[2], f[0]));
             }
         });
     }

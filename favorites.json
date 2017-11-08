@@ -1,32 +1,17 @@
 [
     {
-        "station_id": "FM-FUJI",
-        "station_name": "",
-        "program": {
-            "ft": "20171029200000",
-            "to": "20171029223000",
-            "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/FM-FUJI/20170918142737.jpg",
-            "info": "<a href=\"http://www.fmfuji.jp/mail.php?cd=37\" title=\"ROCKADOM”\" target=\"_blank\">rockadom@fmfuji.jp</a><br />twitterアカウントは「<a href=\"http://twitter.com/#!/jocvfm\">@jocvfm</a>」",
-            "pfm": "伊藤政則 ",
-            "title": "ROCKADOM",
-            "tsInNg": "0",
-            "tsOutNg": "0",
-            "downloadable": false
-        }
-    },
-    {
         "station_id": "TBS",
         "station_name": "",
         "program": {
-            "ft": "20171029115500",
-            "to": "20171029120000",
+            "ft": "20171105115500",
+            "to": "20171105120000",
             "img": "",
             "info": "",
             "pfm": "",
             "title": "小森谷徹 週刊！暮らしの便利帳",
             "tsInNg": "0",
             "tsOutNg": "0",
-            "downloadable": false
+            "downloadable": true
         }
     },
     {
@@ -56,7 +41,7 @@
             "title": "乃木坂46・新内眞衣のオールナイトニッポン0（ZERO）",
             "tsInNg": "0",
             "tsOutNg": "0",
-            "downloadable": false
+            "downloadable": true
         }
     },
     {
@@ -114,6 +99,21 @@
             "info": "<a href=\"http://www.fmfuji.jp/mail.php?cd=37\" title=\"ROCKADOM”\" target=\"_blank\">rockadom@fmfuji.jp</a><br />twitterアカウントは「<a href=\"http://twitter.com/#!/jocvfm\">@jocvfm</a>」",
             "pfm": "伊藤政則 ",
             "title": "ROCKADOM",
+            "tsInNg": "0",
+            "tsOutNg": "0",
+            "downloadable": true
+        }
+    },
+    {
+        "station_id": "LFR",
+        "station_name": "",
+        "program": {
+            "ft": "20171104153000",
+            "to": "20171104163000",
+            "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/LFR/cl_20171002161552_4384427.png",
+            "info": "メールアドレス：<br><a href=\"mailto:100@1242.com\">100@1242.com</a><br><br>番組ホームページは<a href=\"http://www.1242.com/radio/billboard/\">こちら</a><br><br>twitterハッシュタグは「<a href=\"http://twitter.com/#!/search/%23%E3%83%93%E3%83%AB%E3%82%AB%E3%83%B3\">#ビルカン</a>」twitterアカウントは「<a href=\"http://twitter.com/#!/bbjhot100\">@bbjhot100</a>」facebookページは「<a href='http://www.facebook.com/#!/am1242'>http://www.facebook.com/#!/am1242</a>」",
+            "pfm": "天野ひろゆき、増山さやか",
+            "title": "Billboard JAPAN HOT100 COUNTDOWN",
             "tsInNg": "0",
             "tsOutNg": "0",
             "downloadable": true
