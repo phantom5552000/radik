@@ -79,33 +79,30 @@ export class Utility{
         });
     };
     
-    
+    private static dateFormat = {
+        fmt : {
+        "yyyy": function(date) { return date.getFullYear() + ''; },
+        "MM": function(date) { return ('0' + (date.getMonth() + 1)).slice(-2); },
+        "dd": function(date) { return ('0' + date.getDate()).slice(-2); },
+        "hh": function(date) { return ('0' + date.getHours()).slice(-2); },
+        "mm": function(date) { return ('0' + date.getMinutes()).slice(-2); },
+        "ss": function(date) { return ('0' + date.getSeconds()).slice(-2); }
+        },
+        format:(date, format) => {
+            var result = format;
+            for (var key in Utility.dateFormat.fmt)
+                result = result.replace(key, Utility.dateFormat.fmt[key](date));
+            return result;
+        }
+    };    
     public static list_files_console(folder)
     {
         var path = require('path');
-
-        let dateFormat = {
-            fmt : {
-            "yyyy": function(date) { return date.getFullYear() + ''; },
-            "MM": function(date) { return ('0' + (date.getMonth() + 1)).slice(-2); },
-            "dd": function(date) { return ('0' + date.getDate()).slice(-2); },
-            "hh": function(date) { return ('0' + date.getHours()).slice(-2); },
-            "mm": function(date) { return ('0' + date.getMinutes()).slice(-2); },
-            "ss": function(date) { return ('0' + date.getSeconds()).slice(-2); }
-            },
-            format:(date, format) => {
-                var result = format;
-                for (var key in dateFormat.fmt)
-                    result = result.replace(key, dateFormat.fmt[key](date));
-                return result;
-            }
-        };
-
         this.list_files(folder, (file_list) => {
             var sprintf = require("sprintf-js").sprintf;
             for(var i=0; i < file_list.length; i++){
                 let f = file_list[i];
-                console.log(sprintf("%s %10d %s ", dateFormat.format(f[1], 'yyyy/MM/dd hh:mm:ss'), f[2], f[0]));
+                console.log(sprintf("%s %10d %s ", this.dateFormat.format(f[1], 'yyyy/MM/dd hh:mm:ss'), f[2], f[0]));
             }
         });
     }
