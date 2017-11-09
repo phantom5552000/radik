@@ -1,6 +1,9 @@
 const crypto = require('crypto');
 export class Utility{
 
+    private static fs = require('fs');
+    private static path = require('path');
+    
     /**
      * オプジェクトをコピーする
      * @param src
@@ -63,16 +66,15 @@ export class Utility{
 
     public static list_files(target, callback)
     {
-        var fs = require('fs');
-        fs.readdir(target, function(err, files){
+        Utility.fs.readdir(target, function(err, files){
             if (err) throw err;
             var fileList = [];
             files.filter(function(file){
                 var full_path = target + file;
-                return fs.statSync(full_path).isFile() 
+                return Utility.fs.statSync(full_path).isFile() 
             }).forEach(function (file) {
                 var full_path = target + file;
-                var fss = fs.statSync(full_path);
+                var fss = Utility.fs.statSync(full_path);
                 fileList.push([full_path, fss.ctime, fss.size]);
             });
             callback(fileList);
@@ -97,12 +99,12 @@ export class Utility{
     };    
     public static list_files_console(folder)
     {
-        var path = require('path');
+        console.log("folder: %s", folder);
         this.list_files(folder, (file_list) => {
             var sprintf = require("sprintf-js").sprintf;
             for(var i=0; i < file_list.length; i++){
                 let f = file_list[i];
-                console.log(sprintf("%s %10d %s ", this.dateFormat.format(f[1], 'yyyy/MM/dd hh:mm:ss'), f[2], f[0]));
+                console.log(sprintf("%s %10d %s ", this.dateFormat.format(f[1], 'yyyy/MM/dd hh:mm:ss'), f[2], Utility.path.basename(f[0])));
             }
         });
     }

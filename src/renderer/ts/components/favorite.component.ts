@@ -114,7 +114,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     private fs = require('fs');
     private jsonfile = require('jsonfile');
     private exec = require('child_process').exec;
-    private sprintf = require("sprintf-js").sprintf, vsprintf = require("sprintf-js").vsprintf
+    private sprintf = require("sprintf-js").sprintf;
 
     private favorite_file_path = "./favorites.json";
     
@@ -161,7 +161,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         private configService: ConfigService){}
 
     public refresh = () => {
-        console.log("favorites_file_path: '%s'", this.favorite_file_path);
+        //console.log("favorites_file_path: '%s'", this.favorite_file_path);
 
         this.jsonfile.readFile(this.favorite_file_path, {
             encoding: 'utf-8', reviver: null, throws: true
@@ -222,7 +222,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
 
                 complete = true;
                 var cmd = this.sprintf("mv '%1$s' '%2$s'", filename_tmp, filename_part);
-                console.log(cmd);
+                //console.log(cmd);
                 var exec_cmd = this.exec(cmd);      
                 exec_cmd.on('exit', () => {
                     Utility.list_files_console(final_dest);

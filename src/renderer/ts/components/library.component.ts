@@ -93,9 +93,8 @@ export class LibraryComponent implements OnInit, OnDestroy{
                     }
                     return 0;
                 });
-
                 this.files = files;
-                console.log(this.files);
+                //console.log(this.files);
             });
 
     };

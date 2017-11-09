@@ -73,7 +73,7 @@ export class ProgramListComponent implements OnInit, OnDestroy, OnChanges{
 
     private sub;
     private exec = require('child_process').exec;
-    private sprintf = require("sprintf-js").sprintf, vsprintf = require("sprintf-js").vsprintf
+    private sprintf = require("sprintf-js").sprintf;
 
     ngOnInit() {
         this.sub = this.configService.config.subscribe(value =>{
