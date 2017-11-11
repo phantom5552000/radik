@@ -8,7 +8,7 @@ import {Utility} from "../utility";
 
 let app = require('electron').remote.app;
 let process = require('electron').remote.process;
-const libDir = '/usr/local/bin';//Path.join(app.getAppPath(), 'libs', process.platform);
+const libDir = (process.platform == 'darwin')　? '/usr/local/bin' : Path.join(app.getAppPath(), 'libs', process.platform);
 console.log("libDir: "+ libDir);
 
 @Injectable()
@@ -130,7 +130,8 @@ export class RadikoService{
 
             let filename = program.title + '.aac';
             let path = require('path');
-            filename = path.join(saveDir, stationId, program.ft.substr(0, 8), filename);
+            //filename = path.join(saveDir, stationId, program.ft.substr(0, 8), filename);
+            filename = path.join(saveDir, program.ft.substr(0,8) + "-"  + program.title + ".aac");
 
             var fs = require('fs-extra');
             var dir = path.dirname(filename);

@@ -215,12 +215,12 @@ export class ProgramListComponent implements OnInit, OnDestroy, OnChanges{
 
             let path = require('path');
             
-            var final_dest = "/Users/isamunakagawa/Google ドライブ/01-radiko/01-mac/01-el/"
-            var filename_tmp  = path.join(this.config.saveDir, this.station.id, this.selectedProgram.ft.substr(0, 8), this.selectedProgram.title + ".aac");
-            var filename_part = path.join(final_dest, this.selectedProgram.ft.substr(0,8) + "-"  +this.selectedProgram.title + ".aac");
+            //var final_dest = "/Users/isamunakagawa/Google ドライブ/01-radiko/01-mac/01-el/"
+            //var filename_tmp  = path.join(this.config.saveDir, this.station.id, this.selectedProgram.ft.substr(0, 8), this.selectedProgram.title + ".aac");
+            //var filename_part = path.join(final_dest, this.selectedProgram.ft.substr(0,8) + "-"  +this.selectedProgram.title + ".aac");
                                           
-            console.log("filename tmp:  "+ filename_tmp)                
-            console.log("filename part: "+ filename_part) 
+            //console.log("filename tmp:  "+ filename_tmp)                
+            //console.log("filename part: "+ filename_part) 
 
             this.radikoService.getTimeFree(this.station.id, this.selectedProgram, this.config.saveDir, (mes) => {
                     downloadProgress = mes;
@@ -231,12 +231,12 @@ export class ProgramListComponent implements OnInit, OnDestroy, OnChanges{
 
                     complete = true;
 
-                    var cmd = this.sprintf("mv '%1$s' '%2$s'", filename_tmp, filename_part);
-                    console.log(cmd);
-                    var exec_cmd = this.exec(cmd);      
-                    exec_cmd.on('exit', () => {
-                        Utility.list_files_console(final_dest);
-                    });
+                    //var cmd = this.sprintf("mv '%1$s' '%2$s'", filename_tmp, filename_part);
+                    //console.log(cmd);
+                    //var exec_cmd = this.exec(cmd);      
+                    //exec_cmd.on('exit', () => {
+                    //    Utility.list_files_console(final_dest);
+                    //});
                 }
             );
         }
