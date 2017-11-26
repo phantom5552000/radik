@@ -196,21 +196,21 @@ export class ProgramListComponent implements OnInit, OnDestroy, OnChanges{
     private onClickDownload = () =>{
         if(!this.loading) {
             this.loading = true;
-
             this.stateService.isDownloading.next(true);
 
           //  this.changeStatus.emit(true);
 
             let complete = false;
             let downloadProgress = '';
-
+            let downloadPath = '';
+            
             let timer = setInterval(() =>{
                 if(complete){
                     clearInterval(timer);
                     this.stateService.isDownloading.next(false);
                 }
                 this.stateService.downloadProgress.next(downloadProgress);
-
+                this.stateService.downloadPath.next(downloadPath);
             }, 1000);
 
             let path = require('path');
@@ -222,7 +222,11 @@ export class ProgramListComponent implements OnInit, OnDestroy, OnChanges{
             //console.log("filename tmp:  "+ filename_tmp)                
             //console.log("filename part: "+ filename_part) 
 
-            this.radikoService.getTimeFree(this.station.id, this.selectedProgram, this.config.saveDir, (mes) => {
+            this.radikoService.getTimeFree(this.station.id, this.selectedProgram, this.config.saveDir, 
+                (savepath) =>{
+                    downloadPath = savepath;
+                },
+                (mes) => {
                     downloadProgress = mes;
 
                 }, () => {

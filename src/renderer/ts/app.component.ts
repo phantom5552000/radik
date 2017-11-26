@@ -59,6 +59,8 @@ class WebView extends HTMLElement{
                         <p class="modal-card-title">ダウンロード中です</p>
                     </header>
                     <section class="modal-card-body">
+                        <p>{{downloadPath}}</p>
+                        <p>{{downloadProgress}}</p>
                         <progress class="progress is-primary" [value]="downloadProgress" max="100"></progress>
                     </section>
                     <footer class="modal-card-foot has-text-right" style="display: block">
@@ -75,7 +77,8 @@ export class AppComponent implements OnInit{
     private tool:string = 'info';
     private loading:boolean = false;
     private downloadProgress:string = '';
-
+    private downloadPath:string = '';
+    
 
     private playingFile:ILibrary;
     private playingFile2:IFavorite;
@@ -94,6 +97,9 @@ export class AppComponent implements OnInit{
 
         this.stateService.downloadProgress.subscribe(value => {
             this.downloadProgress = value;
+        });
+        this.stateService.downloadPath.subscribe(value => {
+            this.downloadPath = value;
         });
 
         const shell = require('electron').shell;

@@ -122,7 +122,7 @@ export class RadikoService{
      * @param program
      * @param callback
      */
-    public getTimeFree = (stationId: string, program:IProgram, saveDir:string, progress, callback) => {
+    public getTimeFree = (stationId: string, program:IProgram, saveDir:string, notify_path, progress, callback) => {
         this.getToken((token) => {
             let headers = new Headers();
             headers.append('pragma', 'no-cache');
@@ -132,6 +132,7 @@ export class RadikoService{
             let path = require('path');
             //filename = path.join(saveDir, stationId, program.ft.substr(0, 8), filename);
             filename = path.join(saveDir, program.ft.substr(0,8) + "-"  + program.title + ".aac");
+            notify_path(filename);
 
             var fs = require('fs-extra');
             var dir = path.dirname(filename);

@@ -195,14 +195,16 @@ export class FavoriteComponent implements OnInit, OnDestroy{
 
             let complete = false;
             let downloadProgress = '';
-
+            let downloadPath = '';
+            
             let timer = setInterval(() =>{
                 if(complete){
                     clearInterval(timer);
                     this.stateService.isDownloading.next(false);
                 }
                 this.stateService.downloadProgress.next(downloadProgress);
-
+                this.stateService.downloadPath.next(downloadPath);
+                
             }, 1000);
 
             let path = require('path');
@@ -214,7 +216,11 @@ export class FavoriteComponent implements OnInit, OnDestroy{
             //console.log("filename tmp:  "+ filename_tmp)                
             //console.log("filename part: "+ filename_part) 
 
-            this.radikoService.getTimeFree(target.station_id, target.program, this.config.saveDir, (mes) => {
+            this.radikoService.getTimeFree(target.station_id, target.program, this.config.saveDir, 
+            (savepath) =>{
+                downloadPath = savepath;
+            },
+            (mes) => {
                 downloadProgress = mes;
             }, () => {
                 this.loading = false;
