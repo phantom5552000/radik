@@ -116,7 +116,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     private exec = require('child_process').exec;
     private sprintf = require("sprintf-js").sprintf;
 
-    private favorite_file_path = "./favorites.json";
+    //private favorite_file_path = "";
     
     ngOnInit() {
         this.sub = this.stateService.isDownloading.subscribe(value =>{
@@ -162,8 +162,10 @@ export class FavoriteComponent implements OnInit, OnDestroy{
 
     public refresh = () => {
         //console.log("favorites_file_path: '%s'", this.favorite_file_path);
+        let favorite_file_path = this.config.saveDir + "/favorites.json";
+        console.log("favorite_file_path: ", favorite_file_path);
 
-        this.jsonfile.readFile(this.favorite_file_path, {
+        this.jsonfile.readFile(favorite_file_path, {
             encoding: 'utf-8', reviver: null, throws: true
         }, (err, data) => {
             if(err){

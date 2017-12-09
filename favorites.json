@@ -1,25 +1,10 @@
 [
     {
-        "station_id": "TBS",
-        "station_name": "",
-        "program": {
-            "ft": "20171105115500",
-            "to": "20171105120000",
-            "img": "",
-            "info": "",
-            "pfm": "",
-            "title": "小森谷徹 週刊！暮らしの便利帳",
-            "tsInNg": "0",
-            "tsOutNg": "0",
-            "downloadable": true
-        }
-    },
-    {
         "station_id": "802",
         "station_name": "",
         "program": {
-            "ft": "20171104020000",
-            "to": "20171104030000",
+            "ft": "20171125020000",
+            "to": "20171125030000",
             "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/802/cl_20171001050003_8297123.png",
             "info": "",
             "pfm": "伊藤 政則",
@@ -33,8 +18,8 @@
         "station_id": "LFR",
         "station_name": "",
         "program": {
-            "ft": "20171102030000",
-            "to": "20171102043000",
+            "ft": "20171123030000",
+            "to": "20171123043000",
             "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/LFR/cl_20170327143255_444869.png",
             "info": "メールアドレス：<br><a href=\"mailto:nogizaka@allnightnippon.com\">nogizaka@allnightnippon.com</a><br><br>番組ホームページは<a href=\"http://www.allnightnippon.com/nogizaka/\">こちら</a><br><br>twitterハッシュタグは「<a href=\"http://twitter.com/#!/search/%23jolf\">#jolf</a>」<br>twitterアカウントは「<a href=\"http://twitter.com/#!/1242_PR\">@1242_PR</a>」<br>facebookページは「<a href='http://www.facebook.com/#!/am1242'>http://www.facebook.com/#!/am1242</a>」",
             "pfm": "乃木坂46・新内眞衣",
@@ -48,53 +33,53 @@
         "station_id": "802",
         "station_name": "",
         "program": {
-            "ft": "20171104000000",
-            "to": "20171104010000",
+            "ft": "20171125000000",
+            "to": "20171125010000",
             "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/802/cl_20171001050003_8297123.png",
             "info": "",
             "pfm": "伊藤 政則",
             "title": "ROCK ON(24時台)",
             "tsInNg": "0",
             "tsOutNg": "0",
-            "downloadable": false
+            "downloadable": true
         }
     },
     {
         "station_id": "802",
         "station_name": "",
         "program": {
-            "ft": "20171104010000",
-            "to": "20171104020000",
+            "ft": "20171125010000",
+            "to": "20171125020000",
             "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/802/cl_20171001050003_8297123.png",
             "info": "",
             "pfm": "伊藤 政則",
             "title": "ROCK ON(25時台)",
             "tsInNg": "0",
             "tsOutNg": "0",
-            "downloadable": false
+            "downloadable": true
         }
     },
     {
         "station_id": "DATEFM",
         "station_name": "",
         "program": {
-            "ft": "20171105010000",
-            "to": "20171105020000",
+            "ft": "20171203010000",
+            "to": "20171203020000",
             "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/DATEFM/20161013111746.png",
             "info": "<div class=\"station_content_description \"><table border=\"0\" cellpadding=\"5\" >  <tr>      <td style=\"padding: 5px;\"><img src=\"http://program.keitai.fm.s3.amazonaws.com/pms/images/JU/person/1636_825828c8_sq.jpg\" height=\"60\" width=\"60\" alt=\"伊藤政則\"></td>  </tr></table><br /><br />\t伊藤政則がお送りするハード・ロック＆ヘヴィ・メタル専門プログラム。来日ライヴ音源特集や、レア・グッズ・プレゼントなどのキラー・コンテンツも!! <br /><br /><br /></div>",
             "pfm": "伊藤政則",
             "title": "ROCK THE NATION　",
             "tsInNg": "0",
             "tsOutNg": "0",
-            "downloadable": false
+            "downloadable": true
         }
     },
     {
         "station_id": "FM-FUJI",
         "station_name": "",
         "program": {
-            "ft": "20171105200000",
-            "to": "20171105223000",
+            "ft": "20171203200000",
+            "to": "20171203223000",
             "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/FM-FUJI/20170918142737.jpg",
             "info": "<a href=\"http://www.fmfuji.jp/mail.php?cd=37\" title=\"ROCKADOM”\" target=\"_blank\">rockadom@fmfuji.jp</a><br />twitterアカウントは「<a href=\"http://twitter.com/#!/jocvfm\">@jocvfm</a>」",
             "pfm": "伊藤政則 ",
@@ -114,6 +99,21 @@
             "info": "メールアドレス：<br><a href=\"mailto:100@1242.com\">100@1242.com</a><br><br>番組ホームページは<a href=\"http://www.1242.com/radio/billboard/\">こちら</a><br><br>twitterハッシュタグは「<a href=\"http://twitter.com/#!/search/%23%E3%83%93%E3%83%AB%E3%82%AB%E3%83%B3\">#ビルカン</a>」twitterアカウントは「<a href=\"http://twitter.com/#!/bbjhot100\">@bbjhot100</a>」facebookページは「<a href='http://www.facebook.com/#!/am1242'>http://www.facebook.com/#!/am1242</a>」",
             "pfm": "天野ひろゆき、増山さやか",
             "title": "Billboard JAPAN HOT100 COUNTDOWN",
+            "tsInNg": "0",
+            "tsOutNg": "0",
+            "downloadable": true
+        }
+    },
+    {
+        "station_id": "JOEU-FM",
+        "station_name": "",
+        "program": {
+            "ft": "20171202210000",
+            "to": "20171202213000",
+            "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/JOEU-FM/20170330150528.png",
+            "info": "<div class=\"station_content_description \"><table border=\"0\" cellpadding=\"5\" >  <tr>      <td style=\"padding: 5px;\"><img src=\"http://program.keitai.fm.s3.amazonaws.com/pms/images/EU/person/3285_e14b05b1_sq.jpg\" height=\"60\" width=\"60\" alt=\"和田ラヂヲ\"></td>  </tr></table><br /><br />\t番組では、普通のお便り、新しいコーナー提案、あなたの日記…なんでもお待ちしております。どんどん送ってください。twitterでハッシュタグ　#聴くラヂヲ　で呟くか、番組メールアドレス900@joeufm.com　FAX　089-933-6211　までよろしくおねがいします。 <br /><br />\t番組Webサイト：<a href=\"http://www.joeufm.co.jp/radiow/\">http://www.joeufm.co.jp/radiow/</a><br /> <br /> twitterハッシュタグは「<a href=\"http://twitter.com/#!/search/%23%E8%81%B4%E3%81%8F%E3%83%A9%E3%83%82%E3%83%B2%E3%80%80\">#聴くラヂヲ　</a>」<br /> twitterアカウントは「<a href=\"http://twitter.com/#!/radioJOEUFM\">@radioJOEUFM</a>」<br /><br /></div>",
+            "pfm": "和田ラヂヲ",
+            "title": "ニンジニアネットワーク　和田ラヂヲの、聴くラヂヲ２",
             "tsInNg": "0",
             "tsOutNg": "0",
             "downloadable": true

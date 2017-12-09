@@ -1,0 +1,1 @@
+electron-packager . radik --platform=darwin --arch=x64
