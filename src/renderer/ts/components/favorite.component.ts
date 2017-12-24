@@ -248,13 +248,16 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         });
     };
     private writeFile = () =>{
-        this.jsonfile.writeFile(this.favorite_file_path, this.favorites, {
+        let favorite_file_path = this.config.saveDir + "/favorites.json";
+        console.log("writeFile path=%s", favorite_file_path);
+        
+        this.jsonfile.writeFile(favorite_file_path, this.favorites, {
             encoding: 'utf-8', replacer: null, spaces: '    '
         },  (err) => {
             if(err){
                 console.log("writeFile err=%s", err);
             }else{
-                console.log("'%s' has been written.", this.favorite_file_path);
+                console.log("'%s' has been updated.", favorite_file_path);
             }
         });
     };
