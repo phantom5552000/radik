@@ -2,10 +2,10 @@
 エラーの場合は、エラーダイアログを出す
 ソート
 mv/lsの機種依存削除
-favorite.jsonを更新する
 
 
 ■ done
+favorite.jsonを更新する
 favorite.jsonのパスをconfigから取得する
 お気に入りの更新
 すでにダウンロードされている場合、無言でエラーになるのを、明示する

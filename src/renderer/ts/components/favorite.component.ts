@@ -20,13 +20,6 @@ import { parseString } from 'xml2js';
                     <td>{{fav.program.title}}</td>
                     <td>{{fav.program.ft}}</td>
                     <td class="has-text-right">
-                        <button class="button is-small" type="button" (click)="onClickDownload(fav)">
-                            <span class="icon">
-                                <i class="fa fa-download" aria-hidden="true"></i>
-                            </span>
-                        </button>
-                    </td>
-                    <td class="has-text-right">
                         <button class="button is-small" type="button" (click)="onClickRefresh(fav)">
                             <span class="icon">
                                 <i class="fa fa-refresh" aria-hidden="true"></i>
@@ -34,13 +27,20 @@ import { parseString } from 'xml2js';
                         </button>
                     </td>
                     <td class="has-text-right">
-                    <button class="button is-small" type="button" (click)="onClickTrash(fav)">
-                        <span class="icon">
-                            <i class="fa fa-trash-o" aria-hidden="true"></i>
-                        </span>
-                    </button>
-                </td>
-            </tr>
+                        <button class="button is-small" type="button" (click)="onClickDownload(fav)">
+                            <span class="icon">
+                                <i class="fa fa-download" aria-hidden="true"></i>
+                            </span>
+                        </button>
+                    </td>
+                    <td class="has-text-right">
+                        <button class="button is-small" type="button" (click)="onClickTrash(fav)">
+                            <span class="icon">
+                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                            </span>
+                        </button>
+                    </td>
+                </tr>
             </tbody>
         </table>
         <form (ngSubmit)="onSubmit()">
