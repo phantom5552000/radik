@@ -47,6 +47,21 @@ import { parseString } from 'xml2js';
             <div class="message">
                 <div class="message-body">
                     <div class="field ">
+                        <label class="label">ステーション検索(全件、後優先)</label>
+                        <div class="field has-addons">
+                            <p class="control">
+                                <input class="input" type="text" name="station2.id" [(ngModel)]="station2.id">
+                            </p>
+                            <p class="control">
+                                <button class="button" type="button" (click)="onClickSearchSt()">
+                                <span class="icon is-small">
+                                    <i class="fa fa-search"></i>
+                                </span>
+                                </button>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="field ">
                         <label class="label">検索</label>
                         <div class="field has-addons">
                             <p class="control">
@@ -94,6 +109,7 @@ import { parseString } from 'xml2js';
 export class FavoriteComponent implements OnInit, OnDestroy{
     @Input()
     private station:IStation;
+    private station2:IStation;
 
     @Output()
     private changeStatus:EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -101,6 +117,8 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     @Output()
     private play:EventEmitter<IFavorite> = new EventEmitter<IFavorite>();
 
+
+    private regions:IRegion[] = [];
     private loading = false;
     
     private config:IConfig;
@@ -125,27 +143,20 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                this.refresh();
            }
         });
+        this.station2 =  {
+            asciiName: "", href: "", id: "ラジオ日本", logo: "", name: "",
+        };        
         //this.station.id = "FM-FUJI";
         this.station =  {
-            asciiName: "",
-            href: "",
-            id: "FM-FUJI",
-            logo: "",
-            name: "",
+            asciiName: "", href: "", id: "FM-FUJI", logo: "", name: "",
         };        
         this.keyword = "Rockadom";
         this.found_program = { // naka 初期化はもっと良い方法があるはず
             station_id: "",
             station_name: "",
             program:{
-                ft: "",
-                to: "",
-                img: "",
-                info: "",
-                pfm: "",
-                title: "",
-                tsInNg: 0,
-                tsOutNg: 1,
+                ft: "",  to: "",  img: "", info: "",
+                pfm: "", title: "", tsInNg: 0, tsOutNg: 1,
                 downloadable: false
             },
         };
@@ -175,6 +186,8 @@ export class FavoriteComponent implements OnInit, OnDestroy{
             }
         });
     };
+
+
 
     private onClickTrash = (target:IFavorite) =>{
         // 全てを削除。一つだけ削除したい場合は、someを使う　
@@ -239,6 +252,16 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         }
     }
 
+    private onClickSearchSt = () =>{
+        console.log("onClickSearchSt(%s)", this.station2.id);
+        
+        this.searchProgramSt(this.station2.id, (found)　=> {
+            console.log("searchProgramSt()");
+            console.log(found);
+            this.station.id = found; // アロー関数なので、thisが見える
+        });
+        
+    };
     private onClickSearch = () =>{
         console.log("onClickSearch(%s)", this.keyword);
         this.searchProgram(this.station.id, this.keyword, (found)　=> {
@@ -285,7 +308,63 @@ export class FavoriteComponent implements OnInit, OnDestroy{
         this.favorites.push(save);
         this.writeFile();
     }
+    private searchProgramSt = (keyword, callback) =>{
+        this.radikoService.checkLogin().subscribe(res =>{
+            this.radikoService.getStations().subscribe(res => {
+                parseString(res.text(), (err, result) => {
+                    this.regions = [];
+                    result.region.stations.forEach(s1 => {
+                        let region: IRegion = {regionId: s1.$.region_id, regionName: s1.$.region_name, stations: []};
+                        s1.station.forEach(s2 => {
+                            let station = {
+                                asciiName: s2.ascii_name[0],
+                                href: s2.href[0],
+                                id: s2.id[0],
+                                logo: s2.logo[0]._,
+                                name: s2.name[0],
+                            };
+                            region.stations.push(station);
+                            if (station.name.toUpperCase().indexOf(keyword.toUpperCase()) != -1){
+                                console.log(station);
+                                callback(station.id);
+                                // breakは使えない
+                            }
+    
+                        });
+                        this.regions.push(region);
+                    });
 
+                });
+            });
+        }, res => {
+            this.radikoService.getAreaId().subscribe(areaId => {
+                this.radikoService.getStations(areaId).subscribe(res => {
+                    parseString(res.text(), (err, result) => {
+                        this.regions = [];
+
+                        let region: IRegion = {
+                            regionId: result.stations.$.area_id,
+                            regionName: result.stations.$.area_name,
+                            stations: []
+                        };
+                        result.stations.station.forEach(s => {
+                            let station = {
+                                asciiName: s.ascii_name[0],
+                                href: s.href[0],
+                                id: s.id[0],
+                                logo: s.logo[0]._,
+                                name: s.name[0],
+                            };
+
+                            region.stations.push(station);
+
+                        });
+                        this.regions.push(region);
+                    });
+                });
+            });
+        });
+    }
     private searchProgram = (station_id, keyword, callback) =>{
         // コールバックでfound_programを返すよう、変更
 
