@@ -3,6 +3,13 @@
 ソート
 mv/lsの機種依存削除
 
+■task
+program list, favoritesから投入する
+◇検討事項
+タスクリストをどこに持つか
+案１）
+service
+ 
 
 ■ done
 favorite.jsonを更新する

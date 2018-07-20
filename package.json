@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --watch",
     "run": "electron .",
-    "win32" : "node build.js"
+    "win32": "node build.js"
   },
   "keywords": [],
   "author": "",
@@ -43,6 +43,7 @@
     "zone.js": "^0.8.12"
   },
   "dependencies": {
+    "fifo": "^2.3.0",
     "fs-extra": "^3.0.1",
     "klaw": "^2.0.0",
     "xml2js": "^0.4.17"

@@ -6,8 +6,8 @@ import {StateService} from "../services/state.service";
 import {Utility} from "../utility";
 import {RadikoService} from '../services/radiko.service';
 import {IStation, IRegion} from '../interfaces/station.interface';
-import {IProgram} from '../interfaces/program.interface';
 import { parseString } from 'xml2js';
+import { TaskService } from '../services/task.service';
 
 @Component({
     selector: 'Favorite',
@@ -167,6 +167,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     }
 
     constructor(
+        private taskService: TaskService,
         private stateService: StateService,
         private radikoService: RadikoService,
         private configService: ConfigService){}
@@ -200,7 +201,9 @@ export class FavoriteComponent implements OnInit, OnDestroy{
     private onClickDownload = (target:IFavorite) =>{
         console.log("onClick('%s')", target.program.title);
         console.log(target);
+        this.taskService.push(target);
         
+/*
         if(!this.loading) {
             this.loading = true;
 
@@ -250,6 +253,7 @@ export class FavoriteComponent implements OnInit, OnDestroy{
                 //});
             });
         }
+        */
     }
 
     private onClickSearchSt = () =>{

@@ -15,6 +15,7 @@ import { FavoriteComponent    } from './components/favorite.component';
 import { Setting              } from './setting';
 import { PlayerComponent      } from './components/player.component';
 import { StateService         } from './services/state.service';
+import { TaskService } from './services/task.service';
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import { StateService         } from './services/state.service';
         RadikoService,
         ConfigService,
         StateService,
-        Setting
+        Setting,
+        TaskService
     ],
     bootstrap: [AppComponent]
 })
