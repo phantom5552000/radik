@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import {Subject} from 'rxjs/Subject';
 import {IFavorite} from "../interfaces/favorite.interface";
 
 //import {BehaviorSubject} from 'rxjs/BehaviorSubject';
@@ -30,7 +30,19 @@ export class TaskService {
       console.log(target);
       this.fifo.push(target)
   }
-  get(){
-    this.fifo.pop();
+  get():IFavorite{
+    let f:IFavorite =
+      {
+        station_id: "xxx01",
+        station_name: "xxx02",
+        program:{
+            ft: "",  to: "",  img: "", info: "",
+            pfm: "", title: "xxx03", tsInNg: 0, tsOutNg: 1,
+            downloadable: false
+        }
+      
+      }
+    return f;
+    //return this.fifo.pop();
   }
 }

@@ -25,7 +25,7 @@ class WebView extends HTMLElement{
                         <a class="nav-item is-tab" [class.is-active]="tool == 'programs'" (click)="tool = 'programs'">番組表</a>
                         <a class="nav-item is-tab" [class.is-active]="tool == 'library'"  (click)="tool = 'library'">ライブラリ</a>
                         <a class="nav-item is-tab" [class.is-active]="tool == 'favorite'" (click)="tool = 'favorite'">お気に入り</a>
-                        <a class="nav-item is-tab" [class.is-active]="tool == 'tasks'" (click)="tool = 'tasks'">タスク</a>
+                        <a class="nav-item is-tab" [class.is-active]="tool == 'task'" (click)="tool = 'task'">タスク</a>
                     </div>
                     <div class="nav-menu nav-right">
                         <a class="nav-item is-tab" [class.is-active]="tool == 'config'" (click)="tool = 'config'">設定</a>
@@ -47,6 +47,9 @@ class WebView extends HTMLElement{
                 </div>
                 <div [hidden]="tool != 'favorite'" style="width: 100%">
                     <Favorite (play)="onPlay($event)"></Favorite>
+                </div>
+                <div [hidden]="tool != 'task'" style="width: 100%">
+                    <Task (play)="onPlay($event)"></Task>
                 </div>
                 <div *ngIf="tool == 'config'" style="width: 100%">
                     <Config></Config>

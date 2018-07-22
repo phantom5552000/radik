@@ -16,6 +16,8 @@ import { Setting              } from './setting';
 import { PlayerComponent      } from './components/player.component';
 import { StateService         } from './services/state.service';
 import { TaskService } from './services/task.service';
+import { TaskComponent } from './components/task.component';
+
 
 
 @NgModule({
@@ -25,6 +27,7 @@ import { TaskService } from './services/task.service';
         ProgramListComponent,
         ConfigComponent,
         LibraryComponent,
+        TaskComponent,
         FavoriteComponent,
         PlayerComponent
     ],
