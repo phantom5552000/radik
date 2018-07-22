@@ -2,9 +2,10 @@ import {Component, OnInit, OnDestroy, Output, EventEmitter, Input} from '@angula
 import {ConfigService} from '../services/config.service';
 import {IConfig} from '../interfaces/config.interface';
 import {ILibrary} from "../interfaces/library.interface";
-import {StateService} from "../services/state.service";
+//import {StateService} from "../services/state.service";
 import { TaskService } from '../services/task.service';
 import { IFavorite } from '../interfaces/favorite.interface';
+import {RadikoService} from '../services/radiko.service';
 
 /*
                     <td>{{file.station_name}}</td>
@@ -16,15 +17,20 @@ import { IFavorite } from '../interfaces/favorite.interface';
     selector: 'Task',
     template: `
         {{s}}
+        path
+        {{download_path}}
         あああ
         {{count}}
-        {{files[0].station_id}}    
+        len={{files.length}}
+        
         <table class="table is-striped is-narrow">
             <tbody>
-                {{count}}
-                {{files[0].station_id}}    
                 <tr *ngFor="let file of files">
                     <td>{{file.station_id}}</td>
+                    <td>{{file.station_name}}</td>
+                    <td>{{file.program.title}}</td>
+                    <td>{{file.program.ft}}</td>
+
                     <td class="has-text-right">
                         <button class="button is-small" type="button" (click)="onClick(file)">
                             <span class="icon">
@@ -48,9 +54,13 @@ export class TaskComponent implements OnInit, OnDestroy{
 
     private sub;
     private s:string = "TaskComponent";
+    private download_path:string = "TaskComponent";
     private count:number = 0;
+    private loading = false;
 
     ngOnInit() {
+        this.config = this.configService.config.getValue();
+
         /*
         this.sub = this.stateService.isDownloading.subscribe(value =>{
            if(!value){
@@ -67,8 +77,9 @@ export class TaskComponent implements OnInit, OnDestroy{
     }
 
     constructor(
-        private stateService: StateService,
+//        private stateService: StateService,
         private configService: ConfigService,
+        private radikoService: RadikoService,
         private taskService: TaskService){}
 
     public refresh = () => {
@@ -83,12 +94,45 @@ export class TaskComponent implements OnInit, OnDestroy{
             }
         };
   
-        this.files.push(this.taskService.get());
-        this.count += 1;
+        this.files = this.taskService.get();
+        let timer = setInterval(() =>{
+            this.count += 1;
+            if(this.count%3==0){
+                clearInterval(timer);
+            }
+        }, 300);
 
     };
 
-    private onClick = (library:ILibrary) =>{
-    //    this.play.emit({name: library.fullName, fullName: 'file://' + library.fullName, size: library.size, lastUpdate: library.lastUpdate});
-    }
+    private onClick = (library:IFavorite) =>{
+        if(!this.loading) {
+            this.loading = true;
+
+            let complete = false;
+            let downloadProgress = '';
+            let downloadPath = '';
+            
+            let timer = setInterval(() =>{
+                if(complete){
+                    clearInterval(timer);
+                }
+                
+            }, 1000);
+
+
+            this.radikoService.getTimeFree(library.station_id, library.program, this.config.saveDir, 
+            (savepath) =>{
+                this.download_path = savepath;
+            },
+            (mes) => {
+                this.s = mes;
+            }, () => {
+                this.loading = false;
+                console.log("finished.")
+
+                complete = true;
+            });
+        }
+    };
+
 }
