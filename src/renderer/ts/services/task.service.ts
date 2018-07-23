@@ -13,7 +13,7 @@ constructor() { }
       console.log(target);
       this.programs.push(target)
     }
-    get():IFavorite[]{
+    get_and_clear():IFavorite[]{
         var f:IFavorite =
         {
             station_id: "xxx01",
@@ -25,7 +25,8 @@ constructor() { }
             }
       
         }
-        return this.programs;
-    //return this.fifo.pop();
-  }
+        let programs = this.programs;
+        this.programs = [];
+        return programs;
+    }
 }
