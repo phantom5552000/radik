@@ -14,12 +14,6 @@ interface ITask{
     download_path: string;
 }
 
-/*
-                    <td>{{file.station_name}}</td>
-                    <td>{{file.program.title}}</td>
-
-
-*/
 @Component({
     selector: 'Task',
     template: `
@@ -68,14 +62,15 @@ export class TaskComponent implements OnInit, OnDestroy{
     private count:number = 0;
     private loading = false;
 
-
     ngOnInit() {
         this.config = this.configService.config.getValue();
-        this.refresh();
+        this.sub = this.taskService.taskStatus.subscribe(value =>{
+            this.refresh();
+         });
     }
 
     ngOnDestroy(){
-        //this.sub.unsubscribe();
+        this.sub.unsubscribe();
     }
 
     constructor(
@@ -130,5 +125,4 @@ export class TaskComponent implements OnInit, OnDestroy{
             });
         }
     };
-
 }
