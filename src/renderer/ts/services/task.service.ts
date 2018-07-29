@@ -8,7 +8,7 @@ export class TaskService {
     constructor() {}
     private programs: IFavorite[] = [];
     push(target: IFavorite){
-        console.log(target);
+        //console.log(target);
         this.programs.push(target)
         this.taskStatus.next(true);
     }

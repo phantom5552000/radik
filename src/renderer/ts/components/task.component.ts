@@ -156,7 +156,11 @@ export class TaskComponent implements OnInit, OnDestroy{
             (mes) => {
                 this.s = mes;
                 library.download_percentage = mes;
-            }, () => {
+            }, 
+            (complete) => {
+                if(complete == false){
+                    this.s = "failed. " + library.favorite.program.title;
+                }
                 this.loading = false;
                 library.download_percentage = 100;
                 console.log("finished.")

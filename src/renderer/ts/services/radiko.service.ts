@@ -169,7 +169,7 @@ export class RadikoService{
                                 this.ffmpeg.kill();
                                 this.ffmpeg = null;
                                 console.log("!!! ffmpeg terminated. !!!")
-                                callback();
+                                callback(false);
                             }else if(mes.indexOf('size') != -1){
 
                                 let m = mes.match(/time=([0-9:.]+)/);
@@ -185,7 +185,7 @@ export class RadikoService{
                         });
                         this.ffmpeg.on('exit', () => {
                             this.ffmpeg = null;
-                            callback();
+                            callback(true);
                         });
 
                     } else {
