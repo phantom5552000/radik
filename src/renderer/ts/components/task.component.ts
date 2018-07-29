@@ -17,9 +17,9 @@ interface ITask{
 @Component({
     selector: 'Task',
     template: `
+        {{count}} <br>
         {{s}}
         {{download_path}}
-        {{count}}
         len={{files.length}}
         <button class="button is-small" type="button" (click)="onUpdate()">
             <span class="icon">
@@ -54,7 +54,7 @@ export class TaskComponent implements OnInit, OnDestroy{
     private play:EventEmitter<ILibrary> = new EventEmitter<ILibrary>();
 
     private config:IConfig;
-    private files: ITask[]　=　[];
+    private files:ITask[]　=　[];
 
     private sub;
     private s:string = "TaskComponent";
@@ -93,8 +93,16 @@ export class TaskComponent implements OnInit, OnDestroy{
     };
     private onUpdate = () =>{
         this.refresh();
-    }
+    };
 
+    private isAllCompleted():boolean 
+    {
+        for (var i = 0; i < this.files.length; i++) {     
+            let f = this.files[i];
+            if(f.download_percentage < 100) return false;
+        }
+        return true;
+    };
     private onClick = (library:ITask) =>{
         if(!this.loading) {
             this.loading = true;
@@ -104,8 +112,10 @@ export class TaskComponent implements OnInit, OnDestroy{
             //let downloadPath = '';
             
             let timer = setInterval(() =>{
-                if(complete){
+                this.count += 1;
+                if(this.isAllCompleted()){
                     clearInterval(timer);
+                    this.loading = false;
                 }
             }, 1000);
 
