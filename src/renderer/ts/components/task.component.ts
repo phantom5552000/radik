@@ -12,6 +12,7 @@ interface ITask{
     favorite: IFavorite;
     download_percentage: number;
     download_path: string;
+    download_started: boolean;
 }
 
 @Component({
@@ -21,7 +22,7 @@ interface ITask{
         {{s}}
         {{download_path}}
         len={{files.length}}
-        <button class="button is-small" type="button" (click)="onUpdate()">
+        <button class="button is-small" type="button" (click)="onDownloadAll()">
             <span class="icon">
                 <i class="fa fa-refresh" aria-hidden="true"></i>
             </span>
@@ -61,6 +62,7 @@ export class TaskComponent implements OnInit, OnDestroy{
     private download_path:string = "TaskComponent";
     private count:number = 0;
     private loading = false;
+    private all_downloading = false;
 
     ngOnInit() {
         this.config = this.configService.config.getValue();
@@ -82,6 +84,7 @@ export class TaskComponent implements OnInit, OnDestroy{
         let favs = this.taskService.get_and_clear();
         favs.forEach(f => {
             var t:ITask = {
+                download_started: false,
                 download_percentage:0,
                 download_path: "",
                 favorite:f
@@ -91,8 +94,30 @@ export class TaskComponent implements OnInit, OnDestroy{
         console.log("refresh()");
         console.log(this.files);
     };
-    private onUpdate = () =>{
-        this.refresh();
+    private onDownloadAll
+     = () =>{
+        if(this.all_downloading){
+            console.log("already started.")
+            return;
+        }
+        let timer = setInterval(() =>{
+            this.count += 1;
+            if(this.loading) return;
+            if(this.isAllCompleted()){
+                clearInterval(timer);
+                this.all_downloading = false;
+            }else{
+                for (let i = 0; i < this.files.length; i++) {     
+                    let f = this.files[i];
+                    if(f.download_started == false){
+                        f.download_started = true;
+                        console.log("count=%d", this.count);
+                        this.onClick(f);
+                        break;
+                    }
+                }
+            }
+        }, 1000);
     };
 
     private isAllCompleted():boolean 
@@ -101,9 +126,13 @@ export class TaskComponent implements OnInit, OnDestroy{
             let f = this.files[i];
             if(f.download_percentage < 100) return false;
         }
+        console.log("all completed.")
         return true;
     };
+
     private onClick = (library:ITask) =>{
+        console.log("onClick");
+        console.log(library);
         if(!this.loading) {
             this.loading = true;
 
@@ -129,6 +158,7 @@ export class TaskComponent implements OnInit, OnDestroy{
                 library.download_percentage = mes;
             }, () => {
                 this.loading = false;
+                library.download_percentage = 100;
                 console.log("finished.")
 
                 complete = true;
