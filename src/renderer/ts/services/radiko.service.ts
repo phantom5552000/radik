@@ -73,7 +73,7 @@ export class RadikoService{
      * トークン取得
      * @param callback
      */
-    public getToken = (callback) =>{
+    public getToken = (callback, err_callback) =>{
         let headers = new Headers();
 
         headers.append("X-Radiko-App", "pc_ts");
@@ -81,40 +81,47 @@ export class RadikoService{
         headers.append("X-Radiko-User", "test-stream");
         headers.append("X-Radiko-Device", "pc");
 
-        this.http.post('https://radiko.jp/v2/api/auth1_fms', {}, {headers: headers}).subscribe(res =>{
-            let token = res.headers.get('x-radiko-authtoken');
-            let length = parseInt(res.headers.get('x-radiko-keylength'), 10);
-            let offset = parseInt(res.headers.get('x-radiko-keyoffset'), 10);
+        this.http.post('https://radiko.jp/v2/api/auth1_fms', {}, {headers: headers}).subscribe(
+            res =>{
+                let token = res.headers.get('x-radiko-authtoken');
+                let length = parseInt(res.headers.get('x-radiko-keylength'), 10);
+                let offset = parseInt(res.headers.get('x-radiko-keyoffset'), 10);
 
-            var fs = require('fs');
-            var request = require('request');
+                var fs = require('fs');
+                var request = require('request');
 
-            this.getSwf(swf => {
-                var spawn = require('child_process').spawn;
+                this.getSwf(swf => {
+                    var spawn = require('child_process').spawn;
 
-                this.swfextract = spawn(Path.join(libDir, 'swfextract'), ['-b', '12', swf, '-o', Path.join('tmp', 'image.png')]);
-                this.swfextract.on('exit', () => {
-                    fs.open('tmp/image.png', 'r', (err, fd) => {
+                    this.swfextract = spawn(Path.join(libDir, 'swfextract'), ['-b', '12', swf, '-o', Path.join('tmp', 'image.png')]);
+                    this.swfextract.on('exit', () => {
+                        fs.open('tmp/image.png', 'r', (err, fd) => {
 
-                        var buffer = new Buffer(length);
-                        fs.readSync(fd, buffer, 0, length, offset);
-                        let partial_key = buffer.toString('base64');
+                            var buffer = new Buffer(length);
+                            fs.readSync(fd, buffer, 0, length, offset);
+                            let partial_key = buffer.toString('base64');
 
-                        let headers = new Headers();
-                        headers.append("pragma", "no-cache");
-                        headers.append("X-Radiko-App", "pc_ts");
-                        headers.append("X-Radiko-App-Version", "4.0.0");
-                        headers.append("X-Radiko-User", "test-stream");
-                        headers.append("X-Radiko-Device", "pc");
-                        headers.append("X-Radiko-AuthToken", token);
-                        headers.append("X-Radiko-Partialkey", partial_key);
-                        this.http.post('https://radiko.jp/v2/api/auth2_fms', {}, { headers: headers }).subscribe(res =>{
-                            callback(token);
+                            let headers = new Headers();
+                            headers.append("pragma", "no-cache");
+                            headers.append("X-Radiko-App", "pc_ts");
+                            headers.append("X-Radiko-App-Version", "4.0.0");
+                            headers.append("X-Radiko-User", "test-stream");
+                            headers.append("X-Radiko-Device", "pc");
+                            headers.append("X-Radiko-AuthToken", token);
+                            headers.append("X-Radiko-Partialkey", partial_key);
+                            this.http.post('https://radiko.jp/v2/api/auth2_fms', {}, { headers: headers }).subscribe(res =>{
+                                callback(token);
+                            });
                         });
                     });
                 });
-            });
-        });
+            },
+            (any) => {
+                console.log("getToken() error callback");
+                console.log(any);
+                err_callback(false);
+            }
+        );
     };
 
     /**
@@ -122,81 +129,78 @@ export class RadikoService{
      * @param program
      * @param callback
      */
+    // エラーコールバックは設けない、呼び出し側の終了処理を局所化するため
     public getTimeFree = (stationId: string, program:IProgram, saveDir:string, notify_path, progress, callback) => {
-        this.getToken((token) => {
-            let headers = new Headers();
-            headers.append('pragma', 'no-cache');
-            headers.append('X-Radiko-AuthToken', token);
+        this.getToken(
+            (token) => {
+                let headers = new Headers();
+                headers.append('pragma', 'no-cache');
+                headers.append('X-Radiko-AuthToken', token);
 
-            let filename = program.title + '.aac';
-            let path = require('path');
-            //filename = path.join(saveDir, stationId, program.ft.substr(0, 8), filename);
-            filename = path.join(saveDir, program.ft.substr(0,8) + "-"  + program.title + ".aac");
-            notify_path(filename);
+                let filename = program.title + '.aac';
+                let path = require('path');
+                //filename = path.join(saveDir, stationId, program.ft.substr(0, 8), filename);
+                filename = path.join(saveDir, program.ft.substr(0,8) + "-"  + program.title + ".aac");
+                notify_path(filename);
 
-            var fs = require('fs-extra');
-            var dir = path.dirname(filename);
-            if (!fs.existsSync(dir)){
-                fs.mkdirsSync(dir);
-            }
-
-            let duration = Utility.getDuration(program.ft, program.to);
-            this.http.post('https://radiko.jp/v2/api/ts/playlist.m3u8?station_id=' + stationId + '&ft=' + program.ft + '&to=' + program.to, {}, {headers: headers}).subscribe(res => {
-                let m3u8 = '';
-                let lines = res.text().split(/\r\n|\r|\n/);
-                for(let i=0 ; i< lines.length ; i++) {
-                    if(lines[i].indexOf('http') != -1){
-                        m3u8 = lines[i];
-                        break;
-                    }
+                var fs = require('fs-extra');
+                var dir = path.dirname(filename);
+                if (!fs.existsSync(dir)){
+                    fs.mkdirsSync(dir);
                 }
 
-                if(m3u8 != ''){
-                    if(saveDir) {
-                        var spawn = require('child_process').spawn;
-                        this.ffmpeg = spawn(Path.join(libDir, 'ffmpeg'), ['-i', m3u8, '-acodec', 'copy', filename]);
-                        let duration = Utility.getDuration(program.ft, program.to);
-                        this.ffmpeg.stdout.on('data', (data) => {
-                        });
-                        this.ffmpeg.stderr.on('data', (data) => {
-                            /**
-                             * File 'records/TBS/20171029/小森谷徹 週刊！暮らしの便利帳.aac' already exists. Overwrite ? [y/N] "
-                             */
-                            let existing = 'already exists. Overwrite ?';
-                            let mes = data.toString();
-                            if(mes.indexOf(existing) != -1){
-                                console.log(mes);
-                                this.ffmpeg.kill();
-                                this.ffmpeg = null;
-                                console.log("!!! ffmpeg terminated. !!!")
-                                callback(false);
-                            }else if(mes.indexOf('size') != -1){
+                let duration = Utility.getDuration(program.ft, program.to);
+                this.http.post('https://radiko.jp/v2/api/ts/playlist.m3u8?station_id=' + stationId + '&ft=' + program.ft + '&to=' + program.to, {}, {headers: headers}).subscribe(res => {
+                    let m3u8 = '';
+                    let lines = res.text().split(/\r\n|\r|\n/);
+                    for(let i=0 ; i< lines.length ; i++) {
+                        if(lines[i].indexOf('http') != -1){
+                            m3u8 = lines[i];
+                            break;
+                        }
+                    }
 
-                                let m = mes.match(/time=([0-9:.]+)/);
-                                if(m[1]){
-                                    let sec = parseInt(m[1].split(':')[0], 10) * 3600 + parseInt(m[1].split(':')[1], 10) * 60 + parseInt(m[1].split(':')[2], 10);
+                    if(m3u8 != ''){
+                        if(saveDir) {
+                            var spawn = require('child_process').spawn;
+                            this.ffmpeg = spawn(Path.join(libDir, 'ffmpeg'), ['-i', m3u8, '-acodec', 'copy', filename]);
+                            let duration = Utility.getDuration(program.ft, program.to);
+                            this.ffmpeg.stdout.on('data', (data) => {});
+                            this.ffmpeg.stderr.on('data', (data) => {
+                                /**
+                                 * File 'records/TBS/20171029/小森谷徹 週刊！暮らしの便利帳.aac' already exists. Overwrite ? [y/N] "
+                                 */
+                                let existing = 'already exists. Overwrite ?';
+                                let mes = data.toString();
+                                if(mes.indexOf(existing) != -1){
+                                    console.log(mes);
+                                    this.ffmpeg.kill();
+                                    this.ffmpeg = null;
+                                    console.log("!!! ffmpeg terminated. !!!")
+                                    callback(false);
+                                }else if(mes.indexOf('size') != -1){
 
-                                    progress(Math.round((sec / duration) * 100));
+                                    let m = mes.match(/time=([0-9:.]+)/);
+                                    if(m[1]){
+                                        let sec = parseInt(m[1].split(':')[0], 10) * 3600 + parseInt(m[1].split(':')[1], 10) * 60 + parseInt(m[1].split(':')[2], 10);
+
+                                        progress(Math.round((sec / duration) * 100));
+                                    }
                                 }
-
-
-                             //   progress(mes);
-                            }
-                        });
-                        this.ffmpeg.on('exit', () => {
-                            this.ffmpeg = null;
-                            callback(true);
-                        });
-
-                    } else {
-                        callback(m3u8);
+                            });
+                            this.ffmpeg.on('exit', () => {
+                                this.ffmpeg = null;
+                                callback(true);
+                            });
+                            } else {
+                            callback(m3u8);
+                        }
                     }
-
-
-                }
-
+                });
+            },
+            (err)=>{
+                callback(false);
             });
-        });
     };
 
     /**

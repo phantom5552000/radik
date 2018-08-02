@@ -94,8 +94,7 @@ export class TaskComponent implements OnInit, OnDestroy{
         console.log("refresh()");
         console.log(this.files);
     };
-    private onDownloadAll
-     = () =>{
+    private onDownloadAll = () => {
         if(this.all_downloading){
             console.log("already started.")
             return;
@@ -112,7 +111,7 @@ export class TaskComponent implements OnInit, OnDestroy{
                     if(f.download_started == false){
                         f.download_started = true;
                         console.log("count=%d", this.count);
-                        this.onClick(f);
+                        this.download(f);
                         break;
                     }
                 }
@@ -129,9 +128,11 @@ export class TaskComponent implements OnInit, OnDestroy{
         console.log("all completed.")
         return true;
     };
-
     private onClick = (library:ITask) =>{
-        console.log("onClick");
+        this.download(library);
+    }
+    private download = (library:ITask) =>{
+        console.log("download");
         console.log(library);
         if(!this.loading) {
             this.loading = true;
@@ -157,13 +158,16 @@ export class TaskComponent implements OnInit, OnDestroy{
                 this.s = mes;
                 library.download_percentage = mes;
             }, 
+            // getTimeFreeにエラーコールバックを追加することはしない
+            // 終了処理が局所化できなくなるため
             (complete) => {
+                console.log("download completed %s", complete);
                 if(complete == false){
                     this.s = "failed. " + library.favorite.program.title;
                 }
                 this.loading = false;
                 library.download_percentage = 100;
-                console.log("finished.")
+                console.log("finished. title:%s ", library.favorite.program.title);
 
                 complete = true;
             });
