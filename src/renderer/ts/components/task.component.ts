@@ -39,7 +39,14 @@ interface ITask{
                     <td class="has-text-right">
                         <button class="button is-small" type="button" (click)="onClick(file)">
                             <span class="icon">
-                                <i class="fa fa-play-circle" aria-hidden="true"></i>
+                                <i class="fa fa-download" aria-hidden="true"></i>
+                            </span>
+                        </button>
+                    </td>
+                    <td class="has-text-right">
+                        <button class="button is-small" type="button" (click)="onClickTrash(file)">
+                            <span class="icon">
+                                <i class="fa fa-trash-o" aria-hidden="true"></i>
                             </span>
                         </button>
                     </td>
@@ -123,14 +130,22 @@ export class TaskComponent implements OnInit, OnDestroy{
     {
         for (var i = 0; i < this.files.length; i++) {     
             let f = this.files[i];
-            if(f.download_percentage < 100) return false;
+            if(f.download_percentage >= 0 
+                && f.download_percentage < 100) return false;
         }
         console.log("all completed.")
         return true;
     };
     private onClick = (library:ITask) =>{
         this.download(library);
+    };
+    private onClickTrash = (target:ITask) =>{
+        //  ref) https://qiita.com/_shimizu/items/b8eac14f399e20599818
+        this.files = this.files.some(function(v, i) {
+            return (v !== target);
+        });
     }
+
     private download = (library:ITask) =>{
         console.log("download");
         console.log(library);
@@ -164,9 +179,11 @@ export class TaskComponent implements OnInit, OnDestroy{
                 console.log("download completed %s", complete);
                 if(complete == false){
                     this.s = "failed. " + library.favorite.program.title;
+                    library.download_percentage = -1;
+                }else{
+                    library.download_percentage = 100;
                 }
                 this.loading = false;
-                library.download_percentage = 100;
                 console.log("finished. title:%s ", library.favorite.program.title);
 
                 complete = true;
