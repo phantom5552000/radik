@@ -140,8 +140,9 @@ export class TaskComponent implements OnInit, OnDestroy{
         this.download(library);
     };
     private onClickTrash = (target:ITask) =>{
+        // 全てを削除。一つだけ削除したい場合は、someを使う　
         //  ref) https://qiita.com/_shimizu/items/b8eac14f399e20599818
-        this.files = this.files.some(function(v, i) {
+        this.files = this.files.filter(function(v, i) {
             return (v !== target);
         });
     }
