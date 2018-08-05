@@ -2,7 +2,7 @@
 # npm run-script run
 - npmはpackage.json を読み、runエントリーのelectron . を実行
 - electron　次のどちらか不明
-  - electronが規約でindex.htmlを表示
+  - ~~electronが規約でindex.htmlを表示~~
   - electronがなんらかのjsを実行し、そのjsがindex.htmlをロードしているのか？loadUrlでindex.htmlを指定するらしいが、その痕跡はなし
 - index.htlmは js/app.jsを実行
 - index.htmlには次がある
@@ -13,6 +13,7 @@
   > selector: 'App'
 - Appコンポーネント内のtemplateで\<Favaorite>, \<Task>などで子コンポーネントを指定
 - Taskコンポーネントはtask.component.tsで実装
+
 
 
 ✳️コンパイル
